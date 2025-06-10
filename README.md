@@ -46,7 +46,7 @@ Tubes3_ikandanpisang
     ```
 5. run the flet app
     ```
-    flet run counter.py
+    flet run main.py
     ```
 > [!NOTE]
 > Go to Flet docs for more info [Flet](https://flet.dev/docs/)
