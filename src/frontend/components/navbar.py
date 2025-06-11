@@ -1,11 +1,11 @@
 import flet as ft
 
 def create_navbar(page: ft.Page):
-    page.fonts = {
-        "PGO": "fonts/Pathway_Gothic_One/PathwayGothicOne-Regular.ttf",
-    }
+    # page.fonts = {
+    #     "PGO": "fonts/Pathway_Gothic_One/PathwayGothicOne-Regular.ttf",
+    # }
 
-    page.theme = ft.Theme(font_family="PGO")
+    # page.theme = ft.Theme(font_family="PGO")
 
     def flush_session(e):
         # contoh
@@ -37,7 +37,7 @@ def create_navbar(page: ft.Page):
                                     color='white', 
                                     text_style=ft.TextStyle(
                                         font_family="PGO", 
-                                        size=30, 
+                                        size=40, 
                                         decoration={
                                             ft.ControlState.HOVERED: ft.TextDecoration.UNDERLINE, 
                                             ft.ControlState.FOCUSED: ft.TextDecoration.UNDERLINE
@@ -52,7 +52,7 @@ def create_navbar(page: ft.Page):
                                     color='white', 
                                     text_style=ft.TextStyle(
                                         font_family="PGO", 
-                                        size=30, 
+                                        size=40, 
                                         decoration={
                                             ft.ControlState.HOVERED: ft.TextDecoration.UNDERLINE, 
                                             ft.ControlState.FOCUSED: ft.TextDecoration.UNDERLINE
@@ -70,11 +70,11 @@ def create_navbar(page: ft.Page):
         bgcolor='black',
         padding=10,
         margin=0,
-        width=853,
+        width=600,
         height=92,
         border_radius=ft.border_radius.only(
-            bottom_left=10,
-            bottom_right=10,
+            bottom_left=30,
+            bottom_right=30,
         ),
     )
 

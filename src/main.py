@@ -7,18 +7,27 @@ def main(page: ft.Page):
     page.bgcolor = '#EAE6C9'
 
     page.fonts = {
-        "PGO": "fonts/Pathway_Gothic_One/PathwayGothicOne-Regular.ttf",
-        "Freeman": "fonts/Freeman/Freeman-Regular.ttf",
+        "PGO": "/fonts/Pathway_Gothic_One/PathwayGothicOne-Regular.ttf",
+        "Freeman": "/fonts/Freeman/Freeman-Regular.ttf",
     }
 
-    page.theme = ft.Theme(
-        font_family="PGO",
-        text_theme=ft.TextTheme(
-            body_large=ft.TextStyle(color="black"),
-            body_medium=ft.TextStyle(color="black"),
-            body_small=ft.TextStyle(color="black"),
-        )
-    )
+    # page.theme = ft.Theme(
+    #     font_family="PGO",
+    #     text_theme=ft.TextTheme(
+    #         body_large=ft.TextStyle(color="black"),
+    #         body_medium=ft.TextStyle(color="black"),
+    #         body_small=ft.TextStyle(color="black"),
+    #     )
+    # )
+
+    # page.theme = ft.Theme(
+    #     font_family="Freeman",  # Set default font
+    #     text_theme=ft.TextTheme(
+    #         body_large=ft.TextStyle(color="black"),
+    #         body_medium=ft.TextStyle(color="black"),
+    #         body_small=ft.TextStyle(color="black"),
+    #     )
+    # )
 
     def route_change(route):
         page.views.clear()
