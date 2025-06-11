@@ -18,7 +18,7 @@ def create_navbar(page: ft.Page):
 
     def on_home_click(e):
         flush_session(e)
-        page.go("/src/main")
+        page.go("/src/frontend/pages/home")
 
     def on_search_click(e):
         flush_session(e)

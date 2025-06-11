@@ -1,5 +1,6 @@
 import flet as ft
 from frontend.pages.home import create_home_page
+from frontend.pages.searchPage import create_search_page
 
 def main(page: ft.Page):
     page.title = "CV Pattern Matching"
@@ -31,7 +32,7 @@ def main(page: ft.Page):
 
     def route_change(route):
         page.views.clear()
-        if page.route == "/" or page.route == "/src/main":
+        if page.route == "/" or page.route == "/src/frontend/pages/home":
             page.views.append(
                 ft.View(
                     route="/",
@@ -39,7 +40,12 @@ def main(page: ft.Page):
                 )
             )
         elif page.route == "/src/frontend/pages/searchPage":
-            pass
+            page.views.append(
+                ft.View(
+                    route="/src/frontend/pages/searchPage",
+                    controls=[create_search_page(page)]
+                )
+            )
         page.update()
 
     def view_pop(view):
