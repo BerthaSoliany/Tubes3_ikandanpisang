@@ -1,3 +1,5 @@
+import re
+
 class Solution:
     def minDistance(self, word1: str, word2: str) -> int:
         # Inisialisasi cache (tabel DP) dengan nilai 'inf' (infinity)
@@ -32,38 +34,73 @@ class Solution:
         
         # Hasil akhir ada di cache[0][0], yaitu jarak Levenshtein antara seluruh word1 dan word2
         return cache[0][0]
+    
+    def countThreshold(self, word: str) -> int:
+        """
+        Menghitung threshold untuk jarak Levenshtein.
+        Threshold adalah panjang string dibagi 2, dibulatkan ke atas.
+        """
+        length = len(word)
+        if length <= 3:
+            return 0  # Kata sangat pendek, harus persis sama (jarak 0)
+        elif 3 < length <= 6:
+            return 1
+        elif 6 < length <= 10:
+            return 2
+        else:
+            return 3
+        
+    # --- Algoritma Jarak Levenshtein ---    
+    def countFuzzy(self, pattern, text) -> int:
+        threshold = self.countThreshold(pattern)
+        fuzzy_count = 0
 
+        # Normalisasi: Ubah pola dan teks ke lowercase
+        pattern_lower = pattern.lower()
+        text_lower = text.lower()
+
+        # Tokenisasi teks menjadi kata-kata.
+        # Menggunakan regex untuk memisahkan kata-kata (mengabaikan tanda baca, spasi, newline, dll.)
+        # \b\w+\b akan mencocokkan "word boundaries" dan sequence of "word characters"
+        words_in_text = re.findall(r'\b\w+\b', text_lower)
+
+        for word_in_cv in words_in_text:
+
+            # Hitung Levenshtein Distance antara pattern dan word_in_cv
+            distance = self.minDistance(pattern_lower, word_in_cv)
+
+            # Jika jarak di bawah atau sama dengan threshold, tingkatkan count
+            if distance <= threshold:
+                fuzzy_count += 1
+                
+        return fuzzy_count
+
+def count_fuzzy(pattern, text):
+    """
+    Fungsi untuk menghitung jumlah fuzzy match dari pattern dalam teks.
+    Ini adalah fungsi pembungkus untuk memudahkan penggunaan.
+    """
+    sol = Solution()
+    return sol.countFuzzy(pattern, text)
+
+if __name__ == "__main__":
 # --- Contoh Penggunaan ---
 
-# Inisialisasi objek Solution
-sol = Solution()
+    # Inisialisasi objek Solution
+    sol = Solution()
 
-# Contoh 1
-word1_1 = "horse"
-word2_1 = "ros"
-distance_1 = sol.minDistance(word1_1, word2_1)
-print(f"Jarak Levenshtein antara '{word1_1}' dan '{word2_1}': {distance_1}") # Output: 3
+    # Contoh 1: Fuzzy match sederhana
+    text1 = "Saya suka python, dan belajar pyhton di kampus."
+    pattern1 = "python"
+    fuzzy_matches1 = sol.countFuzzy(pattern1, text1)
+    print(f"Pola '{pattern1}' dalam '{text1}': {fuzzy_matches1} fuzzy match") 
+    # Diharapkan: 2 (python, pyhton)
 
-# Contoh 2
-word1_2 = "intention"
-word2_2 = "execution"
-distance_2 = sol.minDistance(word1_2, word2_2)
-print(f"Jarak Levenshtein antara '{word1_2}' dan '{word2_2}': {distance_2}") # Output: 5
-
-# Contoh 3
-word1_3 = "saturday"
-word2_3 = "sunday"
-distance_3 = sol.minDistance(word1_3, word2_3)
-print(f"Jarak Levenshtein antara '{word1_3}' dan '{word2_3}': {distance_3}") # Output: 3
-
-# Contoh 4 (kasus string kosong)
-word1_4 = ""
-word2_4 = "abc"
-distance_4 = sol.minDistance(word1_4, word2_4)
-print(f"Jarak Levenshtein antara '{word1_4}' dan '{word2_4}': {distance_4}") # Output: 3
-
-# Contoh 5 (kasus string sama)
-word1_5 = "apple"
-word2_5 = "apple"
-distance_5 = sol.minDistance(word1_5, word2_5)
-print(f"Jarak Levenshtein antara '{word1_5}' dan '{word2_5}': {distance_5}") # Output: 0
+    # Contoh 2: Threshold dinamis
+    text2 = "Administratr dan sekertaris adalah posisi yang berbeda."
+    pattern2_a = "administrator"
+    pattern2_b = "sekretaris"
+    fuzzy_matches2_a = sol.countFuzzy(pattern2_a, text2)
+    fuzzy_matches2_b = sol.countFuzzy(pattern2_b, text2)
+    print(f"Pola '{pattern2_a}' dalam '{text2}': {fuzzy_matches2_a} fuzzy match") # Diharapkan: 1 (Administratr)
+    print(f"Pola '{pattern2_b}' dalam '{text2}': {fuzzy_matches2_b} fuzzy match") # Diharapkan: 1 (sekertaris)
