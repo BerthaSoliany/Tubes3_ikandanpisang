@@ -6,6 +6,8 @@ def main(page: ft.Page):
     page.title = "CV Pattern Matching"
     page.padding = 0
     page.bgcolor = '#EAE6C9'
+    page.window.height = 800
+    page.window.width = 1300
 
     page.fonts = {
         "PGO": "/fonts/Pathway_Gothic_One/PathwayGothicOne-Regular.ttf",
