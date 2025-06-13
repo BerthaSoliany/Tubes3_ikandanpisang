@@ -1,3 +1,4 @@
 flet
 mysql-connector-python
 regex
+PyPDF2
