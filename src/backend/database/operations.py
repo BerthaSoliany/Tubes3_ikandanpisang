@@ -199,3 +199,37 @@ class DatabaseOperations:
             return False
         finally:
             cursor.close()
+
+    @staticmethod
+    def get_application_by_cv_path(cv_path: str) -> Optional[ApplicationDetail]:
+        connection = get_db_connection()
+        if not connection:
+            return None
+            
+        cursor = None
+        try:
+            cursor = connection.cursor()
+            query = """
+                SELECT detail_id, applicant_id, application_role, cv_path
+                FROM ApplicationDetail
+                WHERE cv_path = %s
+            """
+            cursor.execute(query, (cv_path,))
+            row = cursor.fetchone()
+            # Fetch all remaining results to clear the cursor
+            cursor.fetchall()
+            
+            if row:
+                return ApplicationDetail(
+                    detail_id=row[0],
+                    applicant_id=row[1],
+                    application_role=row[2],
+                    cv_path=row[3]
+                )
+            return None
+        except Error as e:
+            print(f"Error getting application by cv_path: {e}")
+            return None
+        finally:
+            if cursor:
+                cursor.close()
