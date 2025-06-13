@@ -30,7 +30,7 @@ Tubes3_ikandanpisang
    ```
 2. Make a venv
     ```
-    python -m venv .venv
+    py -m venv .venv
     ```
 3. Activate the venv
    - On Windows:
