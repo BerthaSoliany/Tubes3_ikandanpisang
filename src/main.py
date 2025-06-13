@@ -1,8 +1,13 @@
 import flet as ft
+import flet_audio as fta
 from frontend.pages.home import create_home_page
 from frontend.pages.searchPage import create_search_page
+from backend.database.connection import db_manager
 
 def main(page: ft.Page):
+    if not db_manager.initialize_connection():
+        print("Failed to initialize database connection")
+        return
     page.title = "CV Pattern Matching"
     page.padding = 0
     page.bgcolor = '#EAE6C9'
@@ -14,22 +19,39 @@ def main(page: ft.Page):
         "Freeman": "/fonts/Freeman/Freeman-Regular.ttf",
     }
 
-    # page.theme = ft.Theme(
-    #     font_family="PGO",
-    #     text_theme=ft.TextTheme(
-    #         body_large=ft.TextStyle(color="black"),
-    #         body_medium=ft.TextStyle(color="black"),
-    #         body_small=ft.TextStyle(color="black"),
-    #     )
-    # )
 
-    # page.theme = ft.Theme(
-    #     font_family="Freeman",  # Set default font
-    #     text_theme=ft.TextTheme(
-    #         body_large=ft.TextStyle(color="black"),
-    #         body_medium=ft.TextStyle(color="black"),
-    #         body_small=ft.TextStyle(color="black"),
-    #     )
+    # buttonnya diubah jd foto logo aja :D trus ganti jg lagunya :*
+    # background_audio = ft.Audio(
+    #     src="https://luan.xyz/files/audio/ambient_c_motion.mp3",
+    #     autoplay=True,
+    # )
+    # page.overlay.append(background_audio)
+
+    # is_playing = True
+
+    # def toggle_audio(e):
+    #     nonlocal is_playing
+    #     if is_playing:
+    #         background_audio.pause()
+    #         audio_button.icon = ft.Icons.PLAY_ARROW
+    #         audio_button.tooltip = "Play music"
+    #     else:
+    #         background_audio.play()
+    #         audio_button.icon = ft.Icons.PAUSE
+    #         audio_button.tooltip = "Pause music"
+    #     is_playing = not is_playing
+    #     audio_button.update()
+
+    # audio_button = ft.FloatingActionButton(
+    #     icon=ft.Icons.PAUSE,
+    #     bgcolor="black",
+    #     # icon_color="black",
+    #     tooltip="Pause music",
+    #     on_click=toggle_audio,
+    #     width=60,
+    #     height=60,
+    #     left=20,
+    #     top=500
     # )
 
     def route_change(route):
