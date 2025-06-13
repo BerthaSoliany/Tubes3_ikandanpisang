@@ -2,20 +2,163 @@ import flet as ft
 from frontend.components.navbar import create_navbar
 from frontend.components.button import create_button
 from frontend.components.resultCard import create_result_card
+from backend.controllers.searchController import SearchController
 
 def create_search_page(page: ft.Page):
-    is_exact_match = True
-    match_text = (
-        f"Exact Match: {1} CVs scanned in {100}ms" 
-        if is_exact_match 
-        else f"Fuzzy Match: {1} CVs scanned in {101}ms"
-    )
-    data = [create_result_card(page, "Farhan", [("React", 1), ("Express", 2), ("HTML", 1), ("CSS", 1), ("JavaScript", 23)]),
-            create_result_card(page, "Farhan", [("React", 1), ("Express", 2), ("HTML", 1)]),
-            create_result_card(page, "Farhan", [("React", 1), ("Express", 2), ("HTML", 1)]),
-            create_result_card(page, "Farhan", [("React", 1), ("Express", 2), ("HTML", 1)]),
-    ]
     rows = []
+    keywords_field = ft.TextField(
+                        # width=800,
+                        height=50,
+                        border_radius=10,
+                        bgcolor="#E2CD95",
+                        border_color="black",
+                        border_width=2,
+                        text_style=ft.TextStyle(
+                            color="black",
+                            size=20,
+                            font_family="PGO",
+                        ),
+                        cursor_color="black",
+                        hint_text="ex: React, Express, HTML",
+                        hint_style=ft.TextStyle(
+                            color="grey",
+                            size=20,
+                            font_family="PGO",
+                        ),
+                    )
+    
+    algorithm_dropdown = ft.Dropdown(
+                            width=200,
+                            border_color="black",
+                            border_radius=10,
+                            border_width=2,
+                            fill_color="#E2CD95",
+                            # color="#E2CD95",
+                            text_style=ft.TextStyle(
+                                color="black",
+                                size=20,
+                                font_family="PGO",
+                                # bgcolor="#E2CD95",
+                            ),
+                            bgcolor="black",
+                            options=[
+                                ft.dropdown.Option("KMP"),
+                                ft.dropdown.Option("Boyer-Moore"),
+                                ft.dropdown.Option("Aho-Corasick"),
+                            ],
+                        )
+    top_matches_field = ft.TextField(
+                            width=200,
+                            height=50,
+                            bgcolor="#E2CD95",
+                            border_color="black",
+                            border_radius=10,
+                            border_width=2,
+                            color="black",
+                            cursor_color="black",
+                            text_style=ft.TextStyle(
+                                color="black",
+                                size=20,
+                                font_family="PGO",
+                            ),
+                            hint_text="ex: 3",
+                            hint_style=ft.TextStyle(
+                                color="grey",
+                                size=20,
+                                font_family="PGO",
+                            ),
+                        )
+    results_list = ft.ListView(
+                        controls=rows,
+                        spacing=20,
+                        height=320,
+                        expand=True,
+                    )
+
+    # match_text = ft.Text(
+    #     "",
+    #     size=18,
+    #     font_family="PGO",
+    #     color="black",
+    # )
+    exact_text = ft.Text(
+        "",
+        size=18,
+        font_family="PGO",
+        color="black",
+    )
+    fuzzy_text = ft.Text(
+        "",
+        size=18,
+        font_family="PGO",
+        color="black",
+    )
+
+    def search_cvs(e):
+        keywords = [k.strip() for k in keywords_field.value.split(",")]
+        algorithm = algorithm_dropdown.value
+        top_n = int(top_matches_field.value) if top_matches_field.value else None
+        
+        algo_map = {"KMP": 0, "Boyer-Moore": 1, "Aho-Corasick": 2}
+        algo_index = algo_map.get(algorithm, 0)
+        
+        results = SearchController.search_cvs(keywords, algo_index, top_n)
+        if results:
+            results_list.controls.clear()
+            stats = results["statistics"]
+
+            exact_count = sum(1 for r in results["results"] if r["exact_matches"])
+            fuzzy_count = sum(1 for r in results["results"] if r["fuzzy_matches"])
+
+            exact_text.value = f"Exact matching: {exact_count} CV ({stats['exact_time']:.4f}s)"
+            fuzzy_text.value = f"Fuzzy matching: {fuzzy_count} CV ({stats['fuzzy_time']:.4f}s)"
+            # match_text.value = (
+            #     f"Ditemukan sejumlah {len(results['results'])} CV dengan total waktu: {stats['total_time']:.2f}s"
+            #     f"({exact_count} exact macth ({stats['exact_time']:.4f}s) dan {fuzzy_count} fuzzy matches ({stats['exact_time']:.4f}s))"
+            # )
+            
+            current_row = []
+            for result in results["results"]:
+                # print(result)
+                # applicant_info = result.get("applicant_info", {})
+                # print(applicant_info)
+                # applicant_name = applicant_info.get("name", result["name"])
+                card = create_result_card(
+                    page=page,
+                    name=result["name"],
+                    exact_matches=result["exact_matches"],
+                    fuzzy_matches=result["fuzzy_matches"],
+                    # keywords=[(kw, count) for kw, count, _ in result["matches"]],
+                    cv_path=result["cv_path"],
+                    applicant_info=result.get("applicant_info"),
+                )
+                current_row.append(card)
+                # results_list.controls.append(card)
+                
+                if len(current_row) == 3 or result == results["results"][-1]:
+                    row = ft.Row(
+                        controls=current_row,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        spacing=20,
+                    )
+                    results_list.controls.append(row)
+                    current_row = []
+            
+            # if current_row:
+            #     row = ft.Row(
+            #         controls=current_row,
+            #         alignment=ft.MainAxisAlignment.CENTER,
+            #         spacing=20,
+            #     )
+            #     results_list.controls.append(row)
+                
+            # stats = results["statistics"]
+            # nonlocal match_text
+            # match_text = f"Processing time: {stats['total_time']:.2f}s ({len(results['results'])} CVs found)"
+            
+        page.update()
+    
+    data = []
     for i in range(0, len(data), 3):
         row = ft.Row(
             controls=data[i:i+3],
@@ -23,12 +166,15 @@ def create_search_page(page: ft.Page):
             spacing=20,
         )
         rows.append(row)
+
+
     content = ft.Container(
         content=ft.Column([
             ft.Container(
                 content=create_navbar(page),
                 alignment=ft.alignment.center,
             ),
+            # audio_button,
             ft.Container(
                 content=ft.Column([
                     ft.Container(
@@ -39,26 +185,7 @@ def create_search_page(page: ft.Page):
                                 font_family="PGO",
                                 color="black",
                             ),
-                            ft.TextField(
-                                # width=800,
-                                height=50,
-                                border_radius=10,
-                                bgcolor="#E2CD95",
-                                border_color="black",
-                                border_width=2,
-                                text_style=ft.TextStyle(
-                                    color="black",
-                                    size=20,
-                                    font_family="PGO",
-                                ),
-                                cursor_color="black",
-                                hint_text="ex: React, Express, HTML",
-                                hint_style=ft.TextStyle(
-                                    color="grey",
-                                    size=20,
-                                    font_family="PGO",
-                                ),
-                            ),
+                            keywords_field,
                             ft.Row([
                                 ft.Column([
                                     ft.Text(
@@ -67,27 +194,7 @@ def create_search_page(page: ft.Page):
                                         font_family="PGO",
                                         color="black",
                                     ),
-                                    ft.Dropdown(
-                                        width=200,
-                                        border_color="black",
-                                        border_radius=10,
-                                        border_width=2,
-                                        fill_color="#E2CD95",
-                                        # color="#E2CD95",
-                                        text_style=ft.TextStyle(
-                                            color="black",
-                                            size=20,
-                                            font_family="PGO",
-                                            # bgcolor="#E2CD95",
-                                        ),
-                                        bgcolor="black",
-
-                                        options=[
-                                            ft.dropdown.Option("KMP"),
-                                            ft.dropdown.Option("Boyer-Moore"),
-                                            ft.dropdown.Option("Aho-Corasick"),
-                                        ],
-                                    ),
+                                    algorithm_dropdown,
                                 ]),
                                 ft.Column([
                                     ft.Text(
@@ -96,32 +203,12 @@ def create_search_page(page: ft.Page):
                                         font_family="PGO",
                                         color="black",
                                     ),
-                                    ft.TextField(
-                                        width=200,
-                                        height=50,
-                                        bgcolor="#E2CD95",
-                                        border_color="black",
-                                        border_radius=10,
-                                        border_width=2,
-                                        color="black",
-                                        cursor_color="black",
-                                        text_style=ft.TextStyle(
-                                            color="black",
-                                            size=20,
-                                            font_family="PGO",
-                                        ),
-                                        hint_text="ex: 3",
-                                        hint_style=ft.TextStyle(
-                                            color="grey",
-                                            size=20,
-                                            font_family="PGO",
-                                        ),
-                                    ),
+                                    top_matches_field,
                                 ]),
                                 ft.Container(
                                     content=create_button(
                                         text="Search",
-                                        on_click=lambda e: None, # manggil fungsi search meks
+                                        on_click=search_cvs,
                                         bcolor="#9EE295",
                                         width=200,
                                     ),
@@ -142,20 +229,11 @@ def create_search_page(page: ft.Page):
                                 color="black",
                             ),
                             ft.Row([
-                                ft.Text(
-                                    match_text,
-                                    size=18,
-                                    font_family="PGO",
-                                    color="black",
-                                ),
+                                # match_text,
+                                exact_text,
+                                fuzzy_text,
                             ], alignment=ft.MainAxisAlignment.CENTER),
-                            
-                            ft.ListView(
-                                controls=rows,
-                                spacing=20,
-                                height=320,
-                                expand=True,
-                            ),
+                            results_list,
                         ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=5
                         ),
                         padding=ft.padding.only(top=10, left=20, right=20, bottom=10),

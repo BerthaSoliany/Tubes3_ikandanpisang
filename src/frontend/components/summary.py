@@ -1,34 +1,49 @@
 import flet as ft
 from frontend.components.button import create_button
 
-skills = [
-    "React", "Express", "HTML", "CSS", "JavaScript", "Python", "Django",
-    "Flask", "Node.js", "MongoDB", "PostgreSQL", "MySQL", "Git", "Docker",
-]
-
 def summary_dialog(page: ft.Page, name: str):
-        rows = []
-        for i in range(0, len(skills), 6):
-            row = ft.Row([
-                    ft.Container(
-                        content=ft.Text(
-                            skill,
-                            size=16,
-                            font_family="PGO",
-                            color="black",
-                            text_align=ft.TextAlign.CENTER,
-                        ),
-                        bgcolor="#E2D995",
-                        padding=ft.padding.symmetric(10, 20),
-                        border_radius=20,
-                        border=ft.border.all(2, "black"),
-                    ) for skill in skills[i:i+6]
-                ],
-                alignment=ft.MainAxisAlignment.START,
-                spacing=5,
-            )
-            rows.append(row)
-        # panggil fungsi meks disini. trus isi sesuai data2nya. fetch dr database
+    personal_info = {
+    "name": name,
+    "birthdate": "05-19-2025",
+    "address": "Masjid Salman ITB",
+    "phone": "0812 3456 7890",
+    "summary": "Experienced software engineer with a strong background in web development and a passion for building scalable applications. Proficient in both frontend and backend technologies, with a focus on delivering high-quality code and user experiences.",
+    }
+    skills = [
+        "React", "Express", "HTML", "CSS", "JavaScript", "Python", "Django",
+        "Flask", "Node.js", "MongoDB", "PostgreSQL", "MySQL", "Git", "Docker",
+    ]
+    job_history = [
+        "Software Engineer at Company A (2020-2022)",
+        "Frontend Developer at Company B (2018-2020)",
+        "Backend Developer at Company C (2016-2018)",
+    ]
+    education = [
+        "Bachelor of Computer Science, University X (2012-2016)",
+        "Master of Software Engineering, University Y (2016-2018)",
+        "PhD in Computer Science, University Z (2018-2022)",
+    ]
+    rows = []
+    for i in range(0, len(skills), 6):
+        row = ft.Row([
+                ft.Container(
+                    content=ft.Text(
+                        skill,
+                        size=16,
+                        font_family="PGO",
+                        color="black",
+                        text_align=ft.TextAlign.CENTER,
+                    ),
+                    bgcolor="#E2D995",
+                    padding=ft.padding.symmetric(10, 20),
+                    border_radius=20,
+                    border=ft.border.all(2, "black"),
+                ) for skill in skills[i:i+6]
+            ],
+            alignment=ft.MainAxisAlignment.START,
+            spacing=5,
+        )
+        rows.append(row)
         dialog = ft.AlertDialog(
             modal=True,
             title=ft.Text(
@@ -54,33 +69,41 @@ def summary_dialog(page: ft.Page, name: str):
                 content=ft.Column([
                     # Personal Info Section
                     ft.Container(
-                        content=ft.Column([
+                        content=ft.Column(
+                            controls=[
                             ft.Text(
-                                name,
+                                personal_info["name"],
                                 size=24,
                                 weight=ft.FontWeight.BOLD,
                                 font_family="Freeman",
                                 color="black",
                             ),
                             ft.Text(
-                                "Birthdate: 05-19-2025",
+                                "Summary:",
+                                size=20,
+                                # weight=ft.FontWeight.BOLD,
+                                font_family="PGO",
+                                color="black",
+                            ),
+                            ft.Text(
+                                f"Birthdate: {personal_info['birthdate']}",
                                 size=18,
                                 font_family="PGO",
                                 color="black",
                             ),
                             ft.Text(
-                                "Address: Masjid Salman ITB",
+                                f"Address: {personal_info['address']}",
                                 size=18,
                                 font_family="PGO",
                                 color="black",
                             ),
                             ft.Text(
-                                "Phone: 0812 3456 7890",
+                                f"Phone: {personal_info['phone']}",
                                 size=18,
                                 font_family="PGO",
                                 color="black",
-                            ),
-                        ]),
+                            ),]
+                        ),
                         bgcolor="#E2CD95",
                         padding=10,
                         border_radius=10,
@@ -129,6 +152,14 @@ def summary_dialog(page: ft.Page, name: str):
                                 border_radius=10,
                                 padding=10,
                                 content=ft.ListView(
+                                    controls=[
+                                        ft.Text(
+                                            job,
+                                            size=16,
+                                            font_family="PGO",
+                                            color="black",
+                                        ) for job in job_history
+                                    ],
                                     height=100,
                                     spacing=5,
                                 ),
@@ -152,6 +183,14 @@ def summary_dialog(page: ft.Page, name: str):
                                 border_radius=10,
                                 padding=10,
                                 content=ft.ListView(
+                                    controls=[
+                                        ft.Text(
+                                            edu,
+                                            size=16,
+                                            font_family="PGO",
+                                            color="black",
+                                        ) for edu in education
+                                    ],
                                     height=100,
                                     spacing=5,
                                 ),
