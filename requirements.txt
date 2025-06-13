@@ -1,4 +1,4 @@
-flet
-mysql-connector-python
-regex
-PyPDF2
+flet==0.28.3
+mysql-connector-python==9.3.0
+regex==2024.11.6
+PyPDF2==3.0.1
