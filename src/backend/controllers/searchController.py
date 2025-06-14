@@ -12,7 +12,7 @@ class SearchController:
             if not search_results:
                 return None
             
-            final_output_results, exact_time, fuzzy_time, exact_count, fuzzy_count, dict = search_results
+            final_output_results, exact_time, fuzzy_time, exact_count, fuzzy_count, dict_of_cv_texts = search_results
             
             processed_results = []
             for cv_path, (counts, match_flags) in final_output_results.items():
@@ -23,8 +23,8 @@ class SearchController:
                 # print(f"Fuzzy Matches: {fuzzy_matches}")
                 if exact_matches or fuzzy_matches:
                     # print("masuk bos")
-                    cv_path = cv_path.split("Tubes3_ikandanpisang\\")[-1].replace('\\', '/')
-                    app_details = DatabaseOperations.get_application_by_cv_path(cv_path)
+                    file_name = cv_path.split("data\\")[-1].replace('\\', '/')
+                    app_details = DatabaseOperations.get_application_by_cv_path(file_name)
                     
                     applicant_info = {}
                     if app_details:
@@ -58,7 +58,8 @@ class SearchController:
                         "total_matches": sum(count for _, count in exact_matches) + sum(count for _, count in fuzzy_matches),
                         "cv_path": cv_path,
                         "applicant_id": app_details.applicant_id if app_details else None,
-                        "applicant_info": applicant_info
+                        "applicant_info": applicant_info,
+                        "cv_txt": dict_of_cv_texts.get(cv_path, ""),
                     }
                     processed_results.append(result)
                 
