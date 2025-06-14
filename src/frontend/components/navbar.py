@@ -7,21 +7,21 @@ def create_navbar(page: ft.Page):
 
     # page.theme = ft.Theme(font_family="PGO")
 
-    def flush_session(e):
-        # contoh
-        page.session.set("Tanaman", None)
-        page.session.set("Sorting", None)
-        page.session.set("action", None)
-        page.session.set("jenis_tanaman", None)
-        page.session.set("index_tanaman", None)
-        page.session.set("data_pertumbuhan_tanaman", None)
+    # def flush_session(e):
+    #     # contoh
+    #     page.session.set("Tanaman", None)
+    #     page.session.set("Sorting", None)
+    #     page.session.set("action", None)
+    #     page.session.set("jenis_tanaman", None)
+    #     page.session.set("index_tanaman", None)
+    #     page.session.set("data_pertumbuhan_tanaman", None)
 
     def on_home_click(e):
-        flush_session(e)
+        # flush_session(e)
         page.go("/src/frontend/pages/home")
 
     def on_search_click(e):
-        flush_session(e)
+        # flush_session(e)
         page.go("/src/frontend/pages/searchPage")   
 
     return ft.Container(

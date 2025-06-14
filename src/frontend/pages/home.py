@@ -1,7 +1,7 @@
 import flet as ft
 from frontend.components.navbar import create_navbar
 
-def create_home_page(page: ft.Page):
+def create_home_page(page: ft.Page, button: ft.FloatingActionButton | None = None):
     content = ft.Container(
         content=ft.Column([
             ft.Container(
@@ -105,7 +105,6 @@ def create_home_page(page: ft.Page):
                         width=500,
                         border=ft.border.all(2, "black"),
                     ),
-
                     ft.Image(
                         src="/dust1.png",
                         width=250,
@@ -114,6 +113,7 @@ def create_home_page(page: ft.Page):
                         right=5,
                         bottom=-40,
                     ),
+                    button if button else None,
                 ]),
                 padding=0,
                 expand=True,
