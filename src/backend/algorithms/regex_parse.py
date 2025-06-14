@@ -222,6 +222,64 @@ def extract_content_after_education(cv_text: str) -> list[str]:
     
     return None
 
+def extract_content_after_summary(cv_text: str) -> list[str]:
+    """
+    Mengekstrak blok teks yang dimulai dari baris yang mengandung header 'Education'
+    hingga akhir dokumen atau bagian CV berikutnya.
+
+    Args:
+        cv_text (str): Seluruh teks dari dokumen CV.
+
+    Returns:
+        list[str]: Sebuah list berisi string dari blok konten 'Education' yang ditemukan.
+                   Akan mengembalikan list kosong jika tidak ada yang ditemukan.
+    """
+    SUMMARY_SECTION_HEADERS = ["Summary", "Professional Summary"] # Pastikan ini mencakup semua varian
+    summmary_header_pattern = "|".join(re.escape(h) for h in SUMMARY_SECTION_HEADERS)
+
+
+    # Regex untuk menemukan baris header 'Education' dan menangkap semua teks setelahnya
+    # hingga awal bagian CV berikutnya atau akhir dokumen.
+    # r"^(?:.*?" + rf"(?:{summmary_header_pattern})") Mencari header di awal baris manapun.
+    # re.escape(h) for h in ALL_CV_SECTION_HEADERS if h not in EDUCATION_SECTION_HEADERS
+    # Memastikan header yang menjadi penutup tidak termasuk header Education itu sendiri.
+
+    # Pola ini akan mencari baris yang mengandung 'summmary_header_pattern'
+    # dan kemudian menangkap sisanya sebagai 'education_block'.
+    
+    # Strategi: Tangkap dari *awal baris* yang berisi header education
+    #           hingga *awal baris* header berikutnya atau akhir dokumen.
+    summary_block_regex = re.compile(
+        # Cari baris yang mengandung header Education (dimulai dari awal baris)
+        # ^ : Awal baris (karena re.MULTILINE)
+        # .*? : Karakter apapun (non-greedy) hingga header
+        # (?:{summmary_header_pattern}) : Cocokkan header Education
+        # .* : Sisa dari baris header
+        # [\r\n]+ : Satu atau lebih newline (untuk melewati baris header itu sendiri)
+        # (?P<education_block>[\s\S]+?) : Tangkap semua konten hingga...
+        # (?=...) : ...lookahead yang menandakan akhir blok
+        
+        # Contoh: Jika 'Education' di tengah baris, dan kita ingin seluruh baris itu jadi penanda
+        # ^[^\r\n]*(?:{summmary_header_pattern})[^\r\n]*[\r\n]+(?P<education_block>[\s\S]+?)(?=...|\Z)
+        
+        # Regex yang paling umum dan robust untuk ini:
+        # Cari header, kemudian tangkap blok hingga header berikutnya atau akhir dokumen
+        rf"^(?:{summmary_header_pattern})\s*[:]?\s*[\r\n]+" # Header baris, opsional titik dua, newline
+        r"(?P<education_block>[\s\S]+?)"
+        rf"(?=\Z)", # Tangkap semua konten (non-greedy)
+        re.IGNORECASE | re.DOTALL | re.MULTILINE # DOTALL untuk [\s\S] mencakup \n, MULTILINE untuk ^
+    )
+        
+    for block_match in summary_block_regex.finditer(cv_text):
+        summary_block_content = block_match.group('education_block')
+        
+        if summary_block_content:
+            # 2. Ambil semua baris ke dalam list of string
+            lines_in_block = [line.strip() for line in summary_block_content.splitlines() if line.strip()] # Ambil hanya baris non-kosong
+            return lines_in_block[0]
+    
+    return None
+
 def get_summary(cv_text: str) -> dict[str, list[str]]:
     """
     Mengambil ringkasan dari teks CV, termasuk bagian 'Skills', 'Experience', dan 'Education'.
@@ -233,6 +291,7 @@ def get_summary(cv_text: str) -> dict[str, list[str]]:
         dict[str, list[str]]: Ringkasan yang berisi bagian-bagian yang relevan.
     """
     summary = {
+        "summary": extract_content_after_summary(cv_text),
         "skills": extract_skills_section(cv_text),
         "experience": extract_filtered_experience_lines(cv_text),
         "education": extract_content_after_education(cv_text)
