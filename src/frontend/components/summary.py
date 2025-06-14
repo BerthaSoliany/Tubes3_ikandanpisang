@@ -39,7 +39,7 @@ def summary_dialog(page: ft.Page, summary: str, applicant_info: dict):
             expand=True,
         )
         for job in job_history:
-            list = ft.Column([
+            job_column = ft.Column([
                 ft.Text(
                     job[0],
                     size=16,
@@ -54,7 +54,7 @@ def summary_dialog(page: ft.Page, summary: str, applicant_info: dict):
                     color="black",
                 )
             ], alignment=ft.MainAxisAlignment.START)
-            job_list.controls.append(list)
+            job_list.controls.append(job_column)
         job_container = job_list
 
     education = summary["education"]
