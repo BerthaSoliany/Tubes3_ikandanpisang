@@ -12,7 +12,7 @@ class SearchController:
             if not search_results:
                 return None
             
-            final_output_results, exact_time, fuzzy_time, exact_count, fuzzy_count = search_results
+            final_output_results, exact_time, fuzzy_time, exact_count, fuzzy_count, dict = search_results
             
             processed_results = []
             for cv_path, (counts, match_flags) in final_output_results.items():
