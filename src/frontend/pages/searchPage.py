@@ -158,7 +158,7 @@ def create_search_page(page: ft.Page):
             page.update()
             return False
         if top_matches_field.value and int(top_matches_field.value) <= 0:
-            alert_dialog.content = ft.Text("Please enter a number  greater than 0 for Top Matches.")
+            alert_dialog.content = ft.Text("Please enter a number greater than 0 for Top Matches.")
             page.open(alert_dialog)
             page.update()
             return False
