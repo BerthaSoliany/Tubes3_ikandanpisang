@@ -56,7 +56,7 @@ Tubes3_ikandanpisang
      source 
 
 > [!NOTE]
-> If you can't active the venv, please try finding the activate file in the .venv folder and renew the path
+> If you have trouble activating the venv, please locate the activate file in the .venv folder and update the path accordingly.
 4. Install requirement
     ```
     pip install -r requirements.txt
