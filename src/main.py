@@ -19,40 +19,38 @@ def main(page: ft.Page):
         "Freeman": "/fonts/Freeman/Freeman-Regular.ttf",
     }
 
+    background_audio = ft.Audio(
+        src="lofi-295209.mp3",
+        autoplay=True,
+    )
+    page.overlay.append(background_audio)
 
-    # buttonnya diubah jd foto logo aja :D trus ganti jg lagunya :*
-    # background_audio = ft.Audio(
-    #     src="https://luan.xyz/files/audio/ambient_c_motion.mp3",
-    #     autoplay=True,
-    # )
-    # page.overlay.append(background_audio)
+    is_playing = True
 
-    # is_playing = True
+    def toggle_audio(e):
+        nonlocal is_playing
+        if is_playing:
+            background_audio.pause()
+            audio_button.icon = ft.Icons.PLAY_ARROW
+            audio_button.tooltip = "Play music"
+        else:
+            background_audio.play()
+            audio_button.icon = ft.Icons.PAUSE
+            audio_button.tooltip = "Pause music"
+        is_playing = not is_playing
+        audio_button.update()
 
-    # def toggle_audio(e):
-    #     nonlocal is_playing
-    #     if is_playing:
-    #         background_audio.pause()
-    #         audio_button.icon = ft.Icons.PLAY_ARROW
-    #         audio_button.tooltip = "Play music"
-    #     else:
-    #         background_audio.play()
-    #         audio_button.icon = ft.Icons.PAUSE
-    #         audio_button.tooltip = "Pause music"
-    #     is_playing = not is_playing
-    #     audio_button.update()
-
-    # audio_button = ft.FloatingActionButton(
-    #     icon=ft.Icons.PAUSE,
-    #     bgcolor="black",
-    #     # icon_color="black",
-    #     tooltip="Pause music",
-    #     on_click=toggle_audio,
-    #     width=60,
-    #     height=60,
-    #     left=20,
-    #     top=500
-    # )
+    audio_button = ft.FloatingActionButton(
+        icon=ft.Icons.PAUSE,
+        bgcolor="black",
+        # icon_color="black",
+        tooltip="Pause music",
+        on_click=toggle_audio,
+        width=40,
+        height=40,
+        left=1115,
+        top=550
+    )
 
     def route_change(route):
         page.views.clear()
@@ -60,7 +58,7 @@ def main(page: ft.Page):
             page.views.append(
                 ft.View(
                     route="/",
-                    controls=[create_home_page(page)]
+                    controls=[create_home_page(page, audio_button)]
                 )
             )
         elif page.route == "/src/frontend/pages/searchPage":

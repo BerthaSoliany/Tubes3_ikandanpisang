@@ -1,5 +1,13 @@
 # Tubes3_ikandanpisang
 
+## Table of Content
+1. [About](#about)
+2. [Project Structure](#project-structure)
+3. [Requirements](#requirements)
+4. [How To Run](#how-to-run)
+5. [Setting Up the Database](#setting-up-the-database)
+6. [Author](#author)
+
 ## About
 The CV Analyzer App is designed to analyze CVs using advanced algorithms and provide insights based on the extracted information. The application utilizes the Knuth-Morris-Pratt (KMP) and Boyer-Moore (BM) algorithms for efficient string searching, along with the Levenshtein Distance algorithm for measuring string similarity. Regular Expressions (Regex) are employed to extract important information from CVs automatically.
 
@@ -22,7 +30,13 @@ Tubes3_ikandanpisang
 └── README.md                  # Project documentation
 ```
 
-## How To
+## Requirements
+- IDE
+- Git
+- Python
+- MySQL
+
+## How To Run
 1. Clone the repository
     ```bash
    git clone https://github.com/BerthaSoliany/Tubes3_ikandanpisang.git
@@ -40,6 +54,9 @@ Tubes3_ikandanpisang
    - On macOS/Linux:
      ```bash
      source 
+
+> [!NOTE]
+> If you have trouble activating the venv, please locate the activate file in the .venv folder and update the path accordingly.
 4. Install requirement
     ```
     pip install -r requirements.txt
@@ -48,10 +65,23 @@ Tubes3_ikandanpisang
     ```
     flet run main.py
     ```
-> [!NOTE]
-> Go to Flet docs for more info [Flet](https://flet.dev/docs/)
 
-## Usage
-- Upload CVs through the upload page.
-- View analysis results on the results page.
-- Refer to the project report in the `doc` folder for detailed insights and findings.
+## Setting Up the Database
+This is the step to step for setting up the seeding (connecting a personal information to a CV)
+1. Open another terminal and go to the database folder
+    ```bash
+    cd src/backend/database
+    ```
+2. Run the seeding
+    ```bash
+    python seeding.py
+    ```
+3. Choose option 2 to clear the database and input 'y'
+4. Choose option 1 to do the seeding
+
+## Author
+| Nama | Nim |
+|------|-----|
+| Bertha Soliany Frandi | 13523026 |
+| Rafen Max Alessandro | 13523031 |
+| Grace Evelyn Simon | 13523087 |

@@ -33,6 +33,7 @@ def create_search_page(page: ft.Page):
                             border_radius=10,
                             border_width=2,
                             fill_color="#E2CD95",
+                            hint_text="Select an algorithm",
                             # color="#E2CD95",
                             text_style=ft.TextStyle(
                                 color="black",
@@ -94,7 +95,79 @@ def create_search_page(page: ft.Page):
         color="black",
     )
 
+    alert_dialog = ft.AlertDialog(
+        title=ft.Text("Invalid Input"),
+        title_text_style=ft.TextStyle(
+            font_family="PGO",
+            size=24,
+            color="black",
+        ),
+        content="",
+        content_text_style=ft.TextStyle(
+            font_family="PGO",
+            size=20,
+            color="black",
+        ),
+        alignment=ft.alignment.center,
+        bgcolor="#EAE6C9",
+        actions=[
+            create_button(
+                text="OK",
+                on_click=lambda e: page.close(alert_dialog),
+                bcolor="#E2A195",
+                height=30,
+                width=50,
+            )
+
+            # ft.TextButton(
+            #     "OK",
+            #     on_click=lambda e: page.close(alert_dialog),
+            #     style=ft.ButtonStyle(
+            #         color="black",
+            #         bgcolor="#E2A195",
+            #         text_style=ft.TextStyle(
+            #             font_family="PGO",
+            #             size=20,
+            #         ),
+            #         shape=ft.RoundedRectangleBorder(radius=10)
+            #     ),
+            # )
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+    )
+
+    def validate_input(e):
+        if not keywords_field.value or keywords_field.value.strip() == "":
+            alert_dialog.content = ft.Text("Please enter at least one keyword.")
+            page.open(alert_dialog)
+            page.update()
+            return False
+        if algorithm_dropdown.value is None:
+            alert_dialog.content = ft.Text("Please select an algorithm. ")
+            page.open(alert_dialog)
+            page.update()
+            return False
+        if not top_matches_field.value:
+            alert_dialog.content = ft.Text("Please enter a value for Top Matches.")
+            page.open(alert_dialog)
+            page.update()
+            return False
+        if top_matches_field.value and not top_matches_field.value.isdigit():
+            alert_dialog.content = ft.Text("Top Matches must be a number.")
+            page.open(alert_dialog)
+            page.update()
+            return False
+        if top_matches_field.value and int(top_matches_field.value) <= 0:
+            alert_dialog.content = ft.Text("Please enter a number greater than 0 for Top Matches.")
+            page.open(alert_dialog)
+            page.update()
+            return False
+        return True
+            
+
     def search_cvs(e):
+        if not validate_input(e):
+            return
         keywords = [k.strip() for k in keywords_field.value.split(",")]
         algorithm = algorithm_dropdown.value
         top_n = int(top_matches_field.value) if top_matches_field.value else None
@@ -110,8 +183,8 @@ def create_search_page(page: ft.Page):
             exact_count = sum(1 for r in results["results"] if r["exact_matches"])
             fuzzy_count = sum(1 for r in results["results"] if r["fuzzy_matches"])
 
-            exact_text.value = f"Exact matching: {exact_count} CV ({stats['exact_time']:.4f}s)"
-            fuzzy_text.value = f"Fuzzy matching: {fuzzy_count} CV ({stats['fuzzy_time']:.4f}s)"
+            exact_text.value = f"Exact matching: {exact_count} CVs ({stats['exact_time']:.4f}s)"
+            fuzzy_text.value = f"Fuzzy matching: {fuzzy_count} CVs ({stats['fuzzy_time']:.4f}s)"
             # match_text.value = (
             #     f"Ditemukan sejumlah {len(results['results'])} CV dengan total waktu: {stats['total_time']:.2f}s"
             #     f"({exact_count} exact macth ({stats['exact_time']:.4f}s) dan {fuzzy_count} fuzzy matches ({stats['exact_time']:.4f}s))"
@@ -131,6 +204,7 @@ def create_search_page(page: ft.Page):
                     # keywords=[(kw, count) for kw, count, _ in result["matches"]],
                     cv_path=result["cv_path"],
                     applicant_info=result.get("applicant_info"),
+                    extracted_cv=result["cv_txt"]
                 )
                 current_row.append(card)
                 # results_list.controls.append(card)

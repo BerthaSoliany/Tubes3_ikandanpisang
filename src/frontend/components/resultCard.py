@@ -1,10 +1,11 @@
 import flet as ft
 from frontend.components.button import create_button
 from frontend.components.summary import summary_dialog
-from frontend.components.viewCV import view_cv_dialog
+# from frontend.components.viewCV import view_cv_dialog
+from backend.algorithms.regex_parse import get_summary
 import os
 
-def create_result_card(page: ft.Page, name: str, exact_matches: list[tuple[str, int]], fuzzy_matches: list[tuple[str, int]], cv_path: str, applicant_info: dict = None):
+def create_result_card(page: ft.Page, name: str, exact_matches: list[tuple[str, int]], fuzzy_matches: list[tuple[str, int]], cv_path: str, applicant_info: dict = None, extracted_cv: str = None):
     if not exact_matches and not fuzzy_matches:
         return ft.Container(
             content=ft.Text(
@@ -123,15 +124,46 @@ def create_result_card(page: ft.Page, name: str, exact_matches: list[tuple[str, 
 
     
     def show_dialog(e):
-        page.open(summary_dialog(page, name))
+        summary = get_summary(extracted_cv)
+        page.open(summary_dialog(page, summary, applicant_info))
         page.update()
 
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-    cv = os.path.join(project_root, cv_path)
-    def show_cv_dialog(e):
-        pdf_path = cv
-        page.open(view_cv_dialog(page, name, pdf_path))
-        page.update()
+    alert_dialog = ft.AlertDialog(
+        # title=ft.Text("Input tidak valid"),
+        # title_text_style=ft.TextStyle(
+        #     font_family="PGO",
+        #     size=24,
+        #     color="black",
+        # ),
+        content="CV not found. Please check the file path.",
+        content_text_style=ft.TextStyle(
+            font_family="PGO",
+            size=20,
+            color="black",
+        ),
+        alignment=ft.alignment.center,
+        bgcolor="#EAE6C9",
+        actions=[
+            create_button(
+                text="OK",
+                on_click=lambda e: page.close(alert_dialog),
+                bcolor="#E2A195",
+                height=30,
+                width=50,
+            )
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+    )
+    
+    # project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+    # cv = os.path.join(project_root, "data", cv_path)
+    def open_cv(e):
+        if not os.path.exists(cv_path):
+            page.open(alert_dialog)
+            page.update()
+            return
+        else:
+            os.startfile(cv_path)
 
     if applicant_info:
         info_items = []
@@ -177,26 +209,26 @@ def create_result_card(page: ft.Page, name: str, exact_matches: list[tuple[str, 
             
             ft.Container(
                 content=matches_list,
-                height=100,
+                height=130,
                 bgcolor="#EAE6C9",
                 border_radius=10,
             ),
             
             ft.Row([
                 create_button(
-                    text="summary",
+                    text="Summary",
                     on_click=show_dialog,
                     bcolor="#E2CD95",
                     height=35,
                 ),
                 create_button(
-                    text="view CV",
-                    on_click=lambda e: show_cv_dialog(e),
+                    text="View CV",
+                    on_click=lambda e: open_cv(e),
                     bcolor="#E2CD95",
                     height=35,
                 )
             ], alignment=ft.MainAxisAlignment.SPACE_EVENLY),
-        ], spacing=3),
+        ], spacing=5),
         padding=20,
         border_radius=30,
         bgcolor="#EAE6C9",
