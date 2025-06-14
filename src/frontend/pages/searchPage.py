@@ -138,7 +138,7 @@ def create_search_page(page: ft.Page):
 
     def validate_input(e):
         if not keywords_field.value or keywords_field.value.strip() == "":
-            alert_dialog.content = ft.Text("Please enter atleast one keyword.")
+            alert_dialog.content = ft.Text("Please enter at least one keyword.")
             page.open(alert_dialog)
             page.update()
             return False
