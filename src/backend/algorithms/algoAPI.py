@@ -130,11 +130,11 @@ def stringMatching(patterns: list[str], algorithm: int):
             data["match_flags"]
         )
     
-    return (final_output_results, exact_time, fuzzy_time, exact_cv_processed_count, fuzzy_cv_processed_count)
+    return (final_output_results, exact_time, fuzzy_time, exact_cv_processed_count, fuzzy_cv_processed_count, dict_of_cv_texts)
 
 if __name__ == "__main__":
     patterns = ["sales", "Schedulang"]
-    (final_output_results, exact_time, fuzzy_time, exact_cv_processed_count, fuzzy_cv_processed_count) = stringMatching(patterns, 1)
+    (final_output_results, exact_time, fuzzy_time, exact_cv_processed_count, fuzzy_cv_processed_count, dict_of_cv_texts) = stringMatching(patterns, 1)
 
     print("\n--- Ringkasan Hasil per CV ---")
     for cv_path, res_tuple in final_output_results.items():

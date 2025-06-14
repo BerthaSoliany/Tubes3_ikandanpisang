@@ -1,6 +1,6 @@
 import os
 import re
-import PyPDF2
+import pdfplumber
 from typing import Optional
 import concurrent.futures
 
@@ -58,37 +58,17 @@ def extract_text(pdf_path: str) -> Optional[str]:
     extracted_text = None
 
     try:
-        with open(pdf_path, 'rb') as file:
-            pdf_reader = PyPDF2.PdfReader(file)
+        with pdfplumber.open(pdf_path) as pdf:
             text = ""
             
-            for page_num in range(len(pdf_reader.pages)):
-                page = pdf_reader.pages[page_num]
-                text += page.extract_text() + "\n"
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text + "\n"
             
             extracted_text = text.strip()
         
     except Exception as e:
-        print(f"Error extracting with PyPDF2: {e}")
-    
-    if extracted_text:
-        return clean_text(extracted_text)
-    return None
+        print(f"Error extracting with pdfplumber: {e}")
 
-def clean_text(text: str) -> str:
-    if not text:
-        return ""
-    
-    # remove whitespace berlebihan
-    text = re.sub(r'\s+', ' ', text)
-    
-    # remove special character kecuali yang umum digunakan
-    text = re.sub(r'[^\w\s\.\,\-\(\)\@\+\#\&\%\$\!]', ' ', text)
-    
-    # remove spaces berlebihan
-    text = re.sub(r' +', ' ', text)
-    
-    # bersihin line breaks
-    text = text.replace('\n\n', '\n').replace('\r', '')
-    
-    return text.strip()
+    return extracted_text if extracted_text else None
