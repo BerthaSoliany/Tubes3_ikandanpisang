@@ -124,8 +124,8 @@ def summary_dialog(page: ft.Page, summary: str, applicant_info: dict):
                             color="black",
                         ),
                         ft.Text(
-                            # f"Summary: {applicant_info['summary']}",
-                            "Summary: ",
+                            f"Summary: {summary['summary']}",
+                            # "Summary: ",
                             size=18,
                             # weight=ft.FontWeight.BOLD,
                             font_family="PGO",
