@@ -115,7 +115,7 @@ def stringMatching(patterns: list[str], algorithm: int):
                 if fuzzy_count_for_pattern > 0:
                     idx = patterns.index(fuzzy_pattern)
                     results_per_cv_akumulatif[cv_path]["counter"][idx] = fuzzy_count_for_pattern
-                    results_per_cv_akumulatif[cv_path]["match_flags"][i] = 2
+                    results_per_cv_akumulatif[cv_path]["match_flags"][idx] = 2
 
     end_fuzzy_time = time.perf_counter()
     fuzzy_time = end_fuzzy_time - start_fuzzy_time
