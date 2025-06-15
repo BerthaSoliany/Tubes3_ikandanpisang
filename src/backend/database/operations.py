@@ -14,11 +14,28 @@ class DatabaseOperations:
             
         try:
             cursor = connection.cursor()
+
+            # buat applicant instance untuk menangani enkripsi
+            applicant = ApplicantProfile(
+                first_name = first_name,
+                last_name = last_name,
+                date_of_birth = date_of_birth,
+                address = address,
+                phone_number = phone_number
+            )
+            
             insert_query = """
                 INSERT INTO ApplicantProfile (first_name, last_name, date_of_birth, address, phone_number)
                 VALUES (%s, %s, %s, %s, %s)
             """
-            cursor.execute(insert_query, (first_name, last_name, date_of_birth, address, phone_number))
+            # gunakan nilai terenkripsi untuk database
+            cursor.execute(insert_query, (
+                applicant.get_encrypted_first_name(),
+                applicant.get_encrypted_last_name(),
+                applicant.get_encrypted_date_of_birth(),
+                applicant.get_encrypted_address(),
+                applicant.get_encrypted_phone_number()
+            ))
             connection.commit()
             applicant_id = cursor.lastrowid
             return applicant_id

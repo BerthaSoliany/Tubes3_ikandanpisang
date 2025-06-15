@@ -1,5 +1,15 @@
 from datetime import datetime, date
 from typing import Optional, Dict, Any
+try:
+    import sys
+    import os
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+    from src.backend.utils.encryption import encrypt, decrypt, encrypt_date, decrypt_date
+except ImportError:
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+    from src.backend.utils.encryption import encrypt, decrypt, encrypt_date, decrypt_date
 
 class ApplicantProfile:
     """ Ini untuk menyimpan applicant basic information """
@@ -16,6 +26,85 @@ class ApplicantProfile:
         self.address = address
         self.phone_number = phone_number
     
+    # properties dengan encryption/decryption
+    @property
+    def first_name(self) -> Optional[str]:
+        return decrypt(self._first_name) if self._first_name else None
+    
+    @first_name.setter
+    def first_name(self, value: Optional[str]):
+        self._first_name = encrypt(value) if value else None
+    
+    @property
+    def last_name(self) -> Optional[str]:
+        return decrypt(self._last_name) if self._last_name else None
+    
+    @last_name.setter
+    def last_name(self, value: Optional[str]):
+        self._last_name = encrypt(value) if value else None
+
+    @property
+    def date_of_birth(self) -> Optional[date]:
+        if self._date_of_birth:
+            decrypted_str = decrypt_date(self._date_of_birth)
+            return datetime.fromisoformat(decrypted_str).date() if decrypted_str else None
+        return None
+    
+    @date_of_birth.setter
+    def date_of_birth(self, value: Optional[date]):
+        if value:
+            date_str = value.isoformat()
+            self._date_of_birth = encrypt_date(date_str)
+        else:
+            self._date_of_birth = None
+    
+    @property
+    def address(self) -> Optional[str]:
+        return decrypt(self._address) if self._address else None
+    
+    @address.setter
+    def address(self, value: Optional[str]):
+        self._address = encrypt(value) if value else None
+    
+    @property
+    def phone_number(self) -> Optional[str]:
+        return decrypt(self._phone_number) if self._phone_number else None
+    
+    @phone_number.setter
+    def phone_number(self, value: Optional[str]):
+        self._phone_number = encrypt(value) if value else None
+
+    # metode untuk database operations (encrypted data)
+    def get_encrypted_first_name(self) -> Optional[str]:
+        return self._first_name
+    
+    def get_encrypted_last_name(self) -> Optional[str]:
+        return self._last_name
+    
+    def get_encrypted_date_of_birth(self) -> Optional[str]:
+        return self._date_of_birth
+    
+    def get_encrypted_address(self) -> Optional[str]:
+        return self._address
+    
+    def get_encrypted_phone_number(self) -> Optional[str]:
+        return self._phone_number
+    
+    def set_encrypted_first_name(self, encrypted_value: Optional[str]):
+        self._first_name = encrypted_value
+    
+    def set_encrypted_last_name(self, encrypted_value: Optional[str]):
+        self._last_name = encrypted_value
+
+    def set_encrypted_date_of_birth(self, encrypted_value: Optional[str]):
+        self._date_of_birth = encrypted_value
+    
+    def set_encrypted_address(self, encrypted_value: Optional[str]):
+        self._address = encrypted_value
+    
+    def set_encrypted_phone_number(self, encrypted_value: Optional[str]):
+        self._phone_number = encrypted_value
+
     def to_dict(self):
         """ Convert ke dictionary untuk JSON """
         return {
@@ -46,14 +135,14 @@ class ApplicantProfile:
     def from_row(cls, row: tuple):
         """ Buat instance dari database row"""
         if len(row) >= 6:
-            return cls(
-                applicant_id=row[0],
-                first_name=row[1],
-                last_name=row[2],
-                date_of_birth=row[3],
-                address=row[4],
-                phone_number=row[5]
-            )
+            obj = cls()
+            obj.applicant_id = row[0]
+            obj.set_encrypted_first_name(row[1])
+            obj.set_encrypted_last_name(row[2])
+            obj.set_encrypted_date_of_birth(row[3])
+            obj.set_encrypted_address(row[4])
+            obj.set_encrypted_phone_number(row[5])
+            return obj
         return cls()
 
 class ApplicationDetail:
