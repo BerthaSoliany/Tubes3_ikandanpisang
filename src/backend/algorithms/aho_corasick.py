@@ -2,11 +2,11 @@ import collections
 
 class TrieNode:
     def __init__(self):
-        self.children = {}  # Kamus untuk menyimpan transisi karakter ke node anak
-        self.output = []    # Daftar indeks pola yang berakhir di node ini
-        self.failure_link = None # Link kegagalan (akan diatur nanti)
-        self.parent = None  # Parent node (digunakan untuk membangun failure links)
-        self.char_from_parent = None # Karakter dari parent ke node ini
+        self.children = {}              # ke node anak
+        self.output = []                # indeks pola yang berakhir di node ini
+        self.failure_link = None        # failure link
+        self.parent = None              # Parent node
+        self.char_from_parent = None    # Karakter dari parent ke node ini
 
 class AhoCorasick:
     def __init__(self, patterns):
@@ -46,24 +46,20 @@ class AhoCorasick:
 
             # Untuk setiap anak dari current_node
             for char, next_node in current_node.children.items():
-                # Cari failure link untuk next_node
-                # Dimulai dari failure link dari current_node
                 failure_state = current_node.failure_link
 
-                # Cari di sepanjang failure links sampai menemukan karakter yang cocok
                 while failure_state is not None and char not in failure_state.children:
-                    if failure_state == self.root: # Jika sudah kembali ke root dan tidak ada transisi
-                        failure_state = None # Berarti tidak ada failure link yang cocok selain root
+                    if failure_state == self.root:
+                        failure_state = None
                         break
                     failure_state = failure_state.failure_link
 
                 if failure_state is None: # Jika tidak ditemukan, arahkan ke root
                     next_node.failure_link = self.root
-                else: # Jika ditemukan, arahkan ke anak dari failure_state dengan karakter yang sama
+                else:
                     next_node.failure_link = failure_state.children[char]
                 
-                # Warisi output dari failure link
-                # Ini penting agar pola yang ditemukan melalui failure link juga dilaporkan
+                # ambil output dari failure link
                 next_node.output.extend(next_node.failure_link.output)
 
                 queue.append(next_node)
@@ -81,14 +77,13 @@ class AhoCorasick:
             list: Array of integer, di mana setiap elemen adalah jumlah kemunculan
                   dari pola yang sesuai (berdasarkan indeks `self.patterns`).
         """
-        # Inisialisasi array untuk menyimpan hitungan kemunculan untuk setiap pola
-        # Ukurannya sama dengan jumlah pola, dan semua nilai dimulai dari 0
+
         pattern_counts = [0] * len(self.patterns)
         
         current_state = self.root
 
         for i, char in enumerate(text):
-            # Ikuti transisi atau failure links
+            # Ikuti failure links
             while current_state is not None and char not in current_state.children:
                 if current_state == self.root:
                     current_state = None
@@ -100,9 +95,7 @@ class AhoCorasick:
             else:
                 current_state = current_state.children[char]
 
-            # Periksa apakah ada pola yang berakhir di node saat ini atau melalui failure link
             for pattern_idx in current_state.output:
-                # Tambahkan hitungan untuk pola yang sesuai
                 pattern_counts[pattern_idx] += 1
         
         return pattern_counts
@@ -111,8 +104,6 @@ class AhoCorasick:
 def search_aho(patterns, text):
     ac_automaton = AhoCorasick(patterns)
     return ac_automaton.search(text)
-
-# --- Contoh Penggunaan ---
 
 if __name__ == "__main__":
     patterns = ["he", "she", "his", "hers"]

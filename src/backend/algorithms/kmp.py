@@ -1,5 +1,5 @@
 import collections
-import concurrent.futures # Import untuk ThreadPoolExecutor
+import concurrent.futures
 
 def compute_lps_array(pattern):
     """
@@ -36,7 +36,6 @@ def kmp_search_single(text, pattern):
     Returns:
         int: Jumlah kemunculan pola dalam teks (non-overlapping).
     """
-    # Pastikan teks dan pola sudah dalam lowercase jika dipanggil dari fungsi multi-threaded
     n = len(text)
     m = len(pattern)
     
@@ -47,8 +46,8 @@ def kmp_search_single(text, pattern):
 
     lps = compute_lps_array(pattern)
     count = 0
-    i = 0  # Indeks untuk text
-    j = 0  # Indeks untuk pattern
+    i = 0 
+    j = 0 
 
     while i < n:
         if pattern[j] == text[i]:
@@ -85,23 +84,19 @@ def kmp_search_multi_threaded(text, patterns, max_workers=None):
         list[int]: Array of integer, di mana setiap elemen adalah jumlah kemunculan
                    dari pola yang sesuai (berdasarkan indeks `patterns` input).
     """
-    text_lower = text.lower() # Ubah teks ke lowercase sekali saja
+    text_lower = text.lower()
 
-    # Inisialisasi array untuk menyimpan hitungan kemunculan untuk setiap pola
     pattern_counts = [0] * len(patterns)
 
     # Gunakan ThreadPoolExecutor untuk mengelola thread
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-        # Peta setiap pola ke fungsi pencarian tunggal yang akan dijalankan oleh thread
-        # `executor.submit` mengembalikan objek Future
         futures = {executor.submit(kmp_search_single, text_lower, pattern.lower()): idx 
                    for idx, pattern in enumerate(patterns)}
         
-        # Iterasi melalui hasil saat mereka selesai
         for future in concurrent.futures.as_completed(futures):
-            idx = futures[future] # Dapatkan indeks pola asli
+            idx = futures[future]
             try:
-                result = future.result() # Dapatkan hasil (jumlah kemunculan) dari thread
+                result = future.result()
                 pattern_counts[idx] = result
             except Exception as exc:
                 print(f"Pola {patterns[idx]} menghasilkan kesalahan: {exc}")
@@ -111,7 +106,6 @@ def kmp_search_multi_threaded(text, patterns, max_workers=None):
 # API needs
 def search_kmp(patterns, text):
     return kmp_search_multi_threaded(text, patterns)
-
 
 if __name__ == "__main__":
     # --- Contoh Penggunaan KMP Multi-threaded ---
@@ -128,11 +122,6 @@ if __name__ == "__main__":
     counts_ex2 = kmp_search_multi_threaded(text_ex2, patterns_ex2, max_workers=3)
     print(f"\nPola: {patterns_ex2}, Teks: '{text_ex2}'")
     print(f"Jumlah kemunculan: {counts_ex2}") # Output: [3, 2, 1]
-    # 'AA' -> 3 kali (AAAAAA: 'AA' di 0, 'AA' di 2, 'AA' di 4)
-    # 'AAA' -> 2 kali (AAAAAA: 'AAA' di 0, 'AAA' di 1, 'AAA' di 2, 'AAA' di 3) -> Namun, default KMP ini non-overlapping (hitung 'AAA' di 0, 'AAA' di 3)
-    # -> Sebenarnya `kmp_search_single` yang Anda berikan memang non-overlapping.
-    #    Jika ingin overlapping secara eksplisit, akan ada modifikasi lebih lanjut.
-    #    Namun, untuk saat ini, outputnya akan sesuai dengan non-overlapping.
 
     patterns_ex3 = ["abc", "bca", "ca"]
     text_ex3 = "abcabcabc" * 10

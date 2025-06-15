@@ -1,7 +1,6 @@
 import collections
-import concurrent.futures # Untuk ThreadPoolExecutor
+import concurrent.futures
 
-# --- Fungsi build_last dan bm_search_single tetap sama ---
 def build_last(pattern):
     """
     Membangun tabel kemunculan terakhir (last occurrence) untuk algoritma Boyer-Moore.
@@ -15,8 +14,6 @@ def bm_search_single(text, pattern):
     """
     Melakukan pencarian satu pola string menggunakan algoritma Boyer-Moore (non-overlapping).
     """
-    # Catatan: lowercase sudah diasumsikan dilakukan di level panggilan multi-thread
-    # atau di fungsi pemanggil `bm_search_multi_threaded`
     n = len(text)
     m = len(pattern)
     
@@ -53,7 +50,6 @@ def bm_search_single(text, pattern):
 
     return count
 
-# --- Fungsi Multi-Threading Boyer-Moore ---
 def bm_search(text, patterns, max_workers=None):
     """
     Melakukan pencarian beberapa pola string menggunakan algoritma Boyer-Moore (non-overlapping)
@@ -69,24 +65,19 @@ def bm_search(text, patterns, max_workers=None):
         list[int]: Array of integer, di mana setiap elemen adalah jumlah kemunculan
                    dari pola yang sesuai (berdasarkan indeks `patterns` input).
     """
-    text_lower = text.lower() # Ubah teks ke lowercase sekali saja
+    text_lower = text.lower()
 
-    # Inisialisasi array untuk menyimpan hitungan kemunculan untuk setiap pola
-    # Akan diisi secara asinkron oleh thread
     pattern_counts = [0] * len(patterns)
 
     # Gunakan ThreadPoolExecutor untuk mengelola thread
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-        # Peta setiap pola ke fungsi pencarian tunggal yang akan dijalankan oleh thread
-        # `executor.submit` mengembalikan objek Future
         futures = {executor.submit(bm_search_single, text_lower, pattern.lower()): idx 
                    for idx, pattern in enumerate(patterns)}
         
-        # Iterasi melalui hasil saat mereka selesai
         for future in concurrent.futures.as_completed(futures):
-            idx = futures[future] # Dapatkan indeks pola asli
+            idx = futures[future]
             try:
-                result = future.result() # Dapatkan hasil (jumlah kemunculan) dari thread
+                result = future.result()
                 pattern_counts[idx] = result
             except Exception as exc:
                 print(f"Pola {patterns[idx]} menghasilkan kesalahan: {exc}")
@@ -96,8 +87,6 @@ def bm_search(text, patterns, max_workers=None):
 # API needs
 def search_bm(patterns, text):
     return bm_search(text, patterns)
-
-# --- Contoh Penggunaan ---
 
 if __name__ == "__main__":
     print("--- Boyer-Moore Multi-Pattern Search (Multi-threaded) ---")
@@ -115,8 +104,8 @@ if __name__ == "__main__":
     print(f"Jumlah kemunculan: {counts_ex2}")
 
     patterns_ex3 = ["GEEKS", "FOR", "APPLE", "BANANA", "ORANGE"]
-    text_ex3 = "GEEKSFORGEEKS AND SOME OTHER WORDS LIKE APPLE BANANA" * 10 # Teks lebih panjang untuk simulasi
-    counts_ex3 = bm_search(text_ex3, patterns_ex3) # Gunakan default max_workers
+    text_ex3 = "GEEKSFORGEEKS AND SOME OTHER WORDS LIKE APPLE BANANA" * 10
+    counts_ex3 = bm_search(text_ex3, patterns_ex3)
     print(f"\nPola: {patterns_ex3}, Teks: '{text_ex3[:50]}...'")
     print(f"Jumlah kemunculan: {counts_ex3}")
 
