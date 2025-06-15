@@ -46,12 +46,14 @@ class ApplicantProfile:
     @property
     def date_of_birth(self) -> Optional[date]:
         if self._date_of_birth:
-            decrypted_str = decrypt_date(self._date_of_birth)
-            print(f"Decrypted date of birth: {decrypted_str}")
-            print("bisa1")
-            dateee = datetime.fromisoformat(decrypted_str).date() if decrypted_str else None
-            print("bisa2")
-            return datetime.fromisoformat(decrypted_str).date() if decrypted_str else None
+            if isinstance(self._date_of_birth, (date, datetime)):
+                print(f"Date already a date object: {self._date_of_birth}")
+                if isinstance(self._date_of_birth, datetime):
+                    return decrypt_date(self._date_of_birth.date())
+                return decrypt_date(self._date_of_birth.isoformat())
+            else:
+                print(f"Unexpected date_of_birth type: {type(self._date_of_birth)}")
+                return None
         return None
     
     @date_of_birth.setter
