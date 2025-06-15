@@ -1,7 +1,5 @@
 from backend.algorithms.algoAPI import stringMatching
 from backend.database.operations import DatabaseOperations
-# from backend.database.models import ApplicationDetail, ApplicantProfile
-# from backend.utils.pdf_extract import extract_pdfs
 from backend.utils.pdf_extract import extract_text
 from datetime import datetime, date
 import os
@@ -10,24 +8,19 @@ class SearchController:
     @staticmethod
     def extract_cv_texts():
         try:
-            # print("Extracting CV texts from PDF files...")
             project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             project_root = os.path.dirname(project_root)
             applications = DatabaseOperations.get_all_applications()
             if not applications:
                 print("No applications found in the database.")
                 return None
-            # print(f"Found {len(applications)} applications in the database.")
 
             dict_of_cv_texts = {}
             for app in applications:
                 if app.cv_path:
-                    # Construct the full path correctly
                     full_path = os.path.join(project_root, app.cv_path.replace('/', os.sep))
                     if os.path.exists(full_path):
-                        # print(f"Processing: {full_path}")
                         try:
-                            # Call extract_text directly instead of extract_pdfs
                             extracted_text = extract_text(full_path)
                             if extracted_text:
                                 dict_of_cv_texts[full_path] = extracted_text
