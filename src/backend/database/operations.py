@@ -14,11 +14,28 @@ class DatabaseOperations:
             
         try:
             cursor = connection.cursor()
+
+            # buat applicant instance untuk menangani enkripsi
+            applicant = ApplicantProfile(
+                first_name = first_name,
+                last_name = last_name,
+                date_of_birth = date_of_birth,
+                address = address,
+                phone_number = phone_number
+            )
+            
             insert_query = """
                 INSERT INTO ApplicantProfile (first_name, last_name, date_of_birth, address, phone_number)
                 VALUES (%s, %s, %s, %s, %s)
             """
-            cursor.execute(insert_query, (first_name, last_name, date_of_birth, address, phone_number))
+            # gunakan nilai terenkripsi untuk database
+            cursor.execute(insert_query, (
+                applicant.get_encrypted_first_name(),
+                applicant.get_encrypted_last_name(),
+                applicant.get_encrypted_date_of_birth(),
+                applicant.get_encrypted_address(),
+                applicant.get_encrypted_phone_number()
+            ))
             connection.commit()
             applicant_id = cursor.lastrowid
             return applicant_id
@@ -121,6 +138,21 @@ class DatabaseOperations:
             cursor.execute(query, (applicant_id,))
             row = cursor.fetchone()
             if row:
+                # debug print date_of_birth
+                date_of_birth = row[3]
+                print("hhohooho")
+                if isinstance(date_of_birth, datetime):
+                    print("cok")
+                    date_of_birth = date_of_birth.date()
+                elif isinstance(date_of_birth, str):
+                    try:
+                        print("hiihihihi")
+                        date_of_birth = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
+                    except ValueError:
+                        print("Error parsing date_of_birth from string")
+                        date_of_birth = None
+                print(f"Retrieved applicant date_of_birth: {date_of_birth.strftime('%Y-%m-%d') if date_of_birth else 'None'}")
+                
                 return ApplicantProfile.from_row(tuple(row))
             return None
         except Error as e:

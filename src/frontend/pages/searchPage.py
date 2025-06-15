@@ -4,7 +4,7 @@ from frontend.components.button import create_button
 from frontend.components.resultCard import create_result_card
 from backend.controllers.searchController import SearchController
 
-def create_search_page(page: ft.Page):
+def create_search_page(page: ft.Page, dict_of_cv_texts: dict[str, str] = None):
     rows = []
     keywords_field = ft.TextField(
                         # width=800,
@@ -163,42 +163,30 @@ def create_search_page(page: ft.Page):
             page.update()
             return False
         return True
-    
-    loading_container = ft.Container(
-        content=ft.Column([
-            ft.ProgressRing(
-                color="black",
-                width=50,
-                height=50,
-                stroke_width=5,
-            ),
-            ft.Text(
-                "Searching...",
-                size=20,
-                font_family="PGO",
-                color="black",
-                text_align=ft.TextAlign.CENTER,
-            )
-        ],
-        alignment=ft.alignment.center,
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-        spacing=10,
-        ),
-        visible=False,
-        alignment=ft.alignment.center,
-    )
+            
 
     def search_cvs(e):
         if not validate_input(e):
             return
         
-        loading_container.visible = True
-        results_list.controls.clear()
-        results_list.visible = False
-        exact_text.value = ""
-        fuzzy_text.value = ""
-        page.update()
-
+        if not dict_of_cv_texts:
+            print("No CV texts available for search.")
+            results_list.controls.clear()
+            results_list.controls.append(
+                ft.Container(
+                    content=ft.Text(
+                        "No CV texts available for search. Please extract CVs first.",
+                        size=20,
+                        font_family="PGO",
+                        color="black",
+                        text_align=ft.TextAlign.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
+                )
+            )
+            page.update()
+            return
+        
         keywords = [k.strip() for k in keywords_field.value.split(",")]
         algorithm = algorithm_dropdown.value
         top_n = int(top_matches_field.value) if top_matches_field.value else None
@@ -206,7 +194,7 @@ def create_search_page(page: ft.Page):
         algo_map = {"KMP": 0, "Boyer-Moore": 1, "Aho-Corasick": 2}
         algo_index = algo_map.get(algorithm, 0)
         
-        results = SearchController.search_cvs(keywords, algo_index, top_n)
+        results = SearchController.search_cvs(keywords, algo_index, top_n, dict_of_cv_texts)
         if results:
             results_list.controls.clear()
             stats = results["statistics"]
@@ -220,68 +208,47 @@ def create_search_page(page: ft.Page):
             #     f"Ditemukan sejumlah {len(results['results'])} CV dengan total waktu: {stats['total_time']:.2f}s"
             #     f"({exact_count} exact macth ({stats['exact_time']:.4f}s) dan {fuzzy_count} fuzzy matches ({stats['exact_time']:.4f}s))"
             # )
-
-            if exact_count == 0 and fuzzy_count == 0:
-                results_list.controls.append(
-                    ft.Container(
-                        content=ft.Column([
-                            ft.Image(
-                                src="/dust2.png",
-                                width=200,
-                                height=200,
-                                fit=ft.ImageFit.CONTAIN,
-                            ),
-                            ft.Text(
-                                "No matches found",
-                                size=24,
-                                font_family="PGO",
-                                color="red",
-                                text_align=ft.TextAlign.CENTER,
-                                weight= ft.FontWeight.BOLD,
-                            ),
-                        ], alignment=ft.alignment.center, spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-                        # ft.Text(
-                        #     "No matches found",
-                        #     size=24,
-                        #     font_family="PGO",
-                        #     color="black",
-                        #     text_align=ft.TextAlign.CENTER,
-                        # ),
-                        alignment=ft.alignment.center,
-                        margin=ft.margin.only(top=20),
-                        )
+            
+            current_row = []
+            for result in results["results"]:
+                # print(result)
+                # applicant_info = result.get("applicant_info", {})
+                # print(applicant_info)
+                # applicant_name = applicant_info.get("name", result["name"])
+                card = create_result_card(
+                    page=page,
+                    name=result["name"],
+                    exact_matches=result["exact_matches"],
+                    fuzzy_matches=result["fuzzy_matches"],
+                    # keywords=[(kw, count) for kw, count, _ in result["matches"]],
+                    cv_path=result["cv_path"],
+                    applicant_info=result.get("applicant_info"),
+                    extracted_cv=result["cv_txt"]
+                )
+                current_row.append(card)
+                # results_list.controls.append(card)
+                
+                if len(current_row) == 3 or result == results["results"][-1]:
+                    row = ft.Row(
+                        controls=current_row,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        spacing=20,
                     )
-            else:
-                current_row = []
-                for result in results["results"]:
-                    # print(result)
-                    # applicant_info = result.get("applicant_info", {})
-                    # print(applicant_info)
-                    # applicant_name = applicant_info.get("name", result["name"])
-                    card = create_result_card(
-                        page=page,
-                        name=result["name"],
-                        exact_matches=result["exact_matches"],
-                        fuzzy_matches=result["fuzzy_matches"],
-                        # keywords=[(kw, count) for kw, count, _ in result["matches"]],
-                        cv_path=result["cv_path"],
-                        applicant_info=result.get("applicant_info"),
-                        extracted_cv=result["cv_txt"]
-                    )
-                    current_row.append(card)
-                    # results_list.controls.append(card)
-                    
-                    if len(current_row) == 3 or result == results["results"][-1]:
-                        row = ft.Row(
-                            controls=current_row,
-                            alignment=ft.MainAxisAlignment.CENTER,
-                            spacing=20,
-                        )
-                        results_list.controls.append(row)
-                        current_row = []
-                            
-        loading_container.visible = False
-        results_list.visible = True
+                    results_list.controls.append(row)
+                    current_row = []
+            
+            # if current_row:
+            #     row = ft.Row(
+            #         controls=current_row,
+            #         alignment=ft.MainAxisAlignment.CENTER,
+            #         spacing=20,
+            #     )
+            #     results_list.controls.append(row)
+                
+            # stats = results["statistics"]
+            # nonlocal match_text
+            # match_text = f"Processing time: {stats['total_time']:.2f}s ({len(results['results'])} CVs found)"
+            
         page.update()
     
     data = []
@@ -359,9 +326,8 @@ def create_search_page(page: ft.Page):
                                 exact_text,
                                 fuzzy_text,
                             ], alignment=ft.MainAxisAlignment.CENTER),
-                            loading_container,
                             results_list,
-                        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=5, alignment=ft.alignment.center
+                        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=5
                         ),
                         padding=ft.padding.only(top=10, left=20, right=20, bottom=10),
                         bgcolor="#E2CD95",

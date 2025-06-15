@@ -3,12 +3,19 @@ import flet_audio as fta
 from frontend.pages.home import create_home_page
 from frontend.pages.searchPage import create_search_page
 from backend.database.connection import db_manager
-from frontend.components.navbar import Routes
+from backend.controllers.searchController import SearchController
 
 def main(page: ft.Page):
     if not db_manager.initialize_connection():
         print("Failed to initialize database connection")
         return
+    else:
+        print("Starting PDF extract...")
+        dict_of_cv_texts = SearchController.extract_cv_texts()
+        if dict_of_cv_texts is None:
+            print("Failed to extract CV texts")
+            return
+        print("PDF extract completed successfully")
     page.title = "CV Pattern Matching"
     page.padding = 0
     page.bgcolor = '#EAE6C9'
@@ -49,26 +56,24 @@ def main(page: ft.Page):
         on_click=toggle_audio,
         width=40,
         height=40,
-        # left=1115,
-        # top=550
-        right=50,
-        bottom=50,
+        left=1115,
+        top=550
     )
 
     def route_change(route):
         page.views.clear()
-        if page.route ==  Routes.HOME:
+        if page.route == "/" or page.route == "/src/frontend/pages/home":
             page.views.append(
                 ft.View(
-                    route=Routes.HOME,
+                    route="/",
                     controls=[create_home_page(page, audio_button)]
                 )
             )
-        elif page.route == Routes.SEARCH:
+        elif page.route == "/src/frontend/pages/searchPage":
             page.views.append(
                 ft.View(
-                    route=Routes.SEARCH,
-                    controls=[create_search_page(page)]
+                    route="/src/frontend/pages/searchPage",
+                    controls=[create_search_page(page, dict_of_cv_texts)]
                 )
             )
         page.update()
@@ -80,7 +85,7 @@ def main(page: ft.Page):
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
-    page.go(Routes.HOME)
+    page.go("/")
 
 if __name__ == "__main__":
     ft.app(target=main)
