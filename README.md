@@ -9,7 +9,6 @@
 2. [Project Structure](#project-structure)
 3. [Requirements](#requirements)
 4. [How To Run](#how-to-run)
-5. [Setting Up the Database](#setting-up-the-database)
 6. [Author](#author)
 
 ## About
