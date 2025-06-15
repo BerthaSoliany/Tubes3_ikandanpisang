@@ -1,4 +1,8 @@
-# Tubes3_ikandanpisang
+<h1 align="center">📃 Tugas Besar 3 IF2211 Strategi Algoritma 📃</h1>
+<h1 align="center">Pemanfaatan Pattern Matching untuk Membangun Sistem ATS (Applicant Tracking System) Berbasis CV Digital</h1>
+
+![image1](<src/assets/image1.png>)
+![image2](<src/assets/image2.png>)
 
 ## Table of Content
 1. [About](#about)
@@ -61,31 +65,38 @@ Tubes3_ikandanpisang
      ```
    - On macOS/Linux:
      ```bash
-     source 
+     source .venv/bin/activate
+     ```
 
 > [!NOTE]
 > If you have trouble activating the venv, please locate the activate file in the .venv folder and update the path accordingly.
+
 4. Install requirement
     ```
     pip install -r requirements.txt
     ```
-5. run the flet app
-    ```
-    flet run main.py
-    ```
 
-## Setting Up the Database
-This is the step to step for setting up the seeding (connecting a personal information to a CV)
-1. Open another terminal and go to the database folder
-    ```bash
-    cd src/backend/database
-    ```
-2. Run the seeding
-    ```bash
-    python seeding.py
-    ```
-3. Choose option 2 to clear the database and input 'y'
-4. Choose option 1 to do the seeding
+5. Open another terminal
+
+6. Connect to MySQL and prepare the database
+   ```bash
+   mysql -u root
+   ```
+   
+   Then in the MySQL prompt:
+   ```sql
+   USE cv_analyzer;
+   DROP TABLE IF EXISTS applicantprofile;
+   DROP TABLE IF EXISTS applicationdetail;
+   EXIT;
+   ```
+
+7. Back to the first terminal
+
+8. Run the flet app
+   ```
+    flet run main.py
+   ```
 
 ## Author
 | Nama | Nim |
@@ -93,3 +104,5 @@ This is the step to step for setting up the seeding (connecting a personal infor
 | Bertha Soliany Frandi | 13523026 |
 | Rafen Max Alessandro | 13523031 |
 | Grace Evelyn Simon | 13523087 |
+
+![us](<src/assets/us.png>)
