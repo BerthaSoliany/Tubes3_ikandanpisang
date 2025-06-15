@@ -220,47 +220,66 @@ def create_search_page(page: ft.Page):
             #     f"Ditemukan sejumlah {len(results['results'])} CV dengan total waktu: {stats['total_time']:.2f}s"
             #     f"({exact_count} exact macth ({stats['exact_time']:.4f}s) dan {fuzzy_count} fuzzy matches ({stats['exact_time']:.4f}s))"
             # )
-            
-            current_row = []
-            for result in results["results"]:
-                # print(result)
-                # applicant_info = result.get("applicant_info", {})
-                # print(applicant_info)
-                # applicant_name = applicant_info.get("name", result["name"])
-                card = create_result_card(
-                    page=page,
-                    name=result["name"],
-                    exact_matches=result["exact_matches"],
-                    fuzzy_matches=result["fuzzy_matches"],
-                    # keywords=[(kw, count) for kw, count, _ in result["matches"]],
-                    cv_path=result["cv_path"],
-                    applicant_info=result.get("applicant_info"),
-                    extracted_cv=result["cv_txt"]
-                )
-                current_row.append(card)
-                # results_list.controls.append(card)
-                
-                if len(current_row) == 3 or result == results["results"][-1]:
-                    row = ft.Row(
-                        controls=current_row,
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        spacing=20,
+
+            if exact_count == 0 and fuzzy_count == 0:
+                results_list.controls.append(
+                    ft.Container(
+                        content=ft.Column([
+                            ft.Image(
+                                src="/dust2.png",
+                                width=200,
+                                height=200,
+                                fit=ft.ImageFit.CONTAIN,
+                            ),
+                            ft.Text(
+                                "No matches found",
+                                size=24,
+                                font_family="PGO",
+                                color="red",
+                                text_align=ft.TextAlign.CENTER,
+                                weight= ft.FontWeight.BOLD,
+                            ),
+                        ], alignment=ft.alignment.center, spacing=10, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                        # ft.Text(
+                        #     "No matches found",
+                        #     size=24,
+                        #     font_family="PGO",
+                        #     color="black",
+                        #     text_align=ft.TextAlign.CENTER,
+                        # ),
+                        alignment=ft.alignment.center,
+                        margin=ft.margin.only(top=20),
+                        )
                     )
-                    results_list.controls.append(row)
-                    current_row = []
-            
-            # if current_row:
-            #     row = ft.Row(
-            #         controls=current_row,
-            #         alignment=ft.MainAxisAlignment.CENTER,
-            #         spacing=20,
-            #     )
-            #     results_list.controls.append(row)
-                
-            # stats = results["statistics"]
-            # nonlocal match_text
-            # match_text = f"Processing time: {stats['total_time']:.2f}s ({len(results['results'])} CVs found)"
-        
+            else:
+                current_row = []
+                for result in results["results"]:
+                    # print(result)
+                    # applicant_info = result.get("applicant_info", {})
+                    # print(applicant_info)
+                    # applicant_name = applicant_info.get("name", result["name"])
+                    card = create_result_card(
+                        page=page,
+                        name=result["name"],
+                        exact_matches=result["exact_matches"],
+                        fuzzy_matches=result["fuzzy_matches"],
+                        # keywords=[(kw, count) for kw, count, _ in result["matches"]],
+                        cv_path=result["cv_path"],
+                        applicant_info=result.get("applicant_info"),
+                        extracted_cv=result["cv_txt"]
+                    )
+                    current_row.append(card)
+                    # results_list.controls.append(card)
+                    
+                    if len(current_row) == 3 or result == results["results"][-1]:
+                        row = ft.Row(
+                            controls=current_row,
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            spacing=20,
+                        )
+                        results_list.controls.append(row)
+                        current_row = []
+                            
         loading_container.visible = False
         results_list.visible = True
         page.update()
