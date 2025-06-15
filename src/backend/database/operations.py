@@ -243,7 +243,6 @@ class DatabaseOperations:
             """
             cursor.execute(query, (cv_path,))
             row = cursor.fetchone()
-            # Fetch all remaining results to clear the cursor
             cursor.fetchall()
             
             if row:

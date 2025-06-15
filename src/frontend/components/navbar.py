@@ -49,14 +49,10 @@ def create_navbar(page: ft.Page):
                             ),
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
-                        # spacing=50,
                     ),
                     expand=True,
                     alignment=ft.alignment.center,
                 ),
-                # ft.Container(
-                #     width=90,
-                # )
             ], spacing=0,
         ),
         bgcolor='black',
@@ -82,8 +78,6 @@ def create_navbar(page: ft.Page):
                     top=10,
                 ),
                 navbar,],
-        # alignment=ft.MainAxisAlignment.CENTER,
-        # spacing=300,
         alignment=ft.alignment.top_center,
     )
 
