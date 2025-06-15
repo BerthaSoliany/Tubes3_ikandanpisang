@@ -59,7 +59,42 @@ def summary_dialog(page: ft.Page, summary: str, applicant_info: dict):
 
     education = summary["education"]
     if not education:
-        education = ["No education found"]
+        education_container = ft.Container(
+            content=ft.Text(
+                "No education found",
+                size=16,
+                font_family="PGO",
+                color="black",
+            ),
+            bgcolor="#E2CD95",
+            padding=ft.padding.symmetric(10, 20),
+            border_radius=20,
+            border=ft.border.all(2, "black"),
+        )
+    else:
+        education_list = ft.ListView(
+            height=100,
+            expand=True,
+            spacing=10,
+        )
+        for edu in education:
+            education_column = ft.Column([
+                ft.Text(
+                    edu[0],
+                    size=16,
+                    font_family="PGO",
+                    color="black",
+                    weight=ft.FontWeight.BOLD,
+                ),
+                ft.Text(
+                    edu[1],
+                    size=14,
+                    font_family="PGO",
+                    color="black",
+                )
+            ], alignment=ft.MainAxisAlignment.START)
+            education_list.controls.append(education_column)
+        education_container = education_list
 
     rows = []
     # for i in range(0, len(skills), 6):
@@ -246,18 +281,7 @@ def summary_dialog(page: ft.Page, summary: str, applicant_info: dict):
                             bgcolor="#E2CD95",
                             border_radius=10,
                             padding=10,
-                            content=ft.ListView(
-                                controls=[
-                                    ft.Text(
-                                        education,
-                                        size=16,
-                                        font_family="PGO",
-                                        color="black",
-                                    )
-                                ],
-                                height=100,
-                                spacing=5,
-                            ),
+                            content=education_container,
                             border=ft.border.all(2, "black")
                         ),
                     ],),
