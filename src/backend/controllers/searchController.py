@@ -51,9 +51,9 @@ class SearchController:
             search_results = stringMatching(keywords, algorithm, dict_of_cv_texts)
             if not search_results:
                 return None
-            print("cekkkkk -1")
+            # print("cekkkkk -1")
             final_output_results, exact_time, fuzzy_time, exact_count, fuzzy_count = search_results
-            print("cekkkkkkkk 0")
+            # print("cekkkkkkkk 0")
             processed_results = []
             for cv_path, (counts, match_flags) in final_output_results.items():
                 exact_matches = [(kw, count) for kw, count, flag in zip(keywords, counts, match_flags) if flag == 1 and count > 0]
@@ -64,30 +64,30 @@ class SearchController:
                 if exact_matches or fuzzy_matches:
                     # print("masuk bos")
                     file_name = cv_path.split("Tubes3_ikandanpisang\\")[-1].replace('\\', '/')
-                    print(f"cekkkk 1")
+                    # print(f"cekkkk 1")
                     app_details = DatabaseOperations.get_application_by_cv_path(file_name)
-                    print(f"cekkkk 2")
+                    # print(f"cekkkk 2")
                     applicant_info = {}
                     if app_details:
-                        print("cekkk 3")
+                        # print("cekkk 3")
                         applicant = DatabaseOperations.get_applicant_by_id(app_details.applicant_id)
-                        print ("cekkk 4")
+                        # print ("cekkk 4")
                         if applicant:
                             try:
                                 birth_date = "N/A"
-                                print("haii")
+                                # print("haii")
                                 if hasattr(applicant, 'date_of_birth') and applicant.date_of_birth:
-                                    print("uuuuu")
+                                    # print("uuuuu")
                                     if isinstance(applicant.date_of_birth, (date, datetime)):
-                                        print("masuk sini 2")
+                                        # print("masuk sini 2")
                                         birth_date = applicant.date_of_birth.strftime('%Y-%m-%d')
                                     else:
-                                        print("masuk sini")
+                                        # print("masuk sini")
                                         birth_date = str(applicant.date_of_birth)
                             except Exception as e:
                                 print(f"Error formatting date: {e}")
                                 birth_date = "N/A"
-                            print("aaaaaaaaaaaaa")
+                            # print("aaaaaaaaaaaaa")
                             # print("cekkk" + applicant.date_of_birth)
                             applicant_info = {
                                 "name": f"{applicant.first_name} {applicant.last_name}",
@@ -96,7 +96,7 @@ class SearchController:
                                 "address": applicant.address,
                                 "dob": birth_date
                             }
-                            print("cek apalah ini")
+                            # print("cek apalah ini")
                             name = applicant_info["name"]
                             # print(f"Processing CV for applicant: {name}")
                             # print(f"CV Path: {cv_path}")
@@ -111,7 +111,7 @@ class SearchController:
                         print(f"No application details found for CV: {cv_path}")
                         name = os.path.basename(cv_path).replace('.pdf', '')
                     
-                    print(f"cekkk 5")
+                    # print(f"cekkk 5")
                     result = {
                         "name": name,
                         "exact_matches": exact_matches,
@@ -123,15 +123,15 @@ class SearchController:
                         "cv_txt": dict_of_cv_texts.get(cv_path, ""),
                     }
                     processed_results.append(result)
-                    print(f"cekkk 6")
+                    # print(f"cekkk 6")
             processed_results.sort(key=lambda x: x["total_matches"], reverse=True)
-            print("cekkk 7")
+            # print("cekkk 7")
             if top_n:
-                print("cekkkk 8")
+                # print("cekkkk 8")
                 processed_results = processed_results[:top_n]
-                print("cekkkkk 9")
+                # print("cekkkkk 9")
             
-            print("cekkkk 10")
+            # print("cekkkk 10")
             return {
                 "results": processed_results,
                 "statistics": {
