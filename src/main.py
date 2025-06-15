@@ -3,6 +3,7 @@ import flet_audio as fta
 from frontend.pages.home import create_home_page
 from frontend.pages.searchPage import create_search_page
 from backend.database.connection import db_manager
+from frontend.components.navbar import Routes
 
 def main(page: ft.Page):
     if not db_manager.initialize_connection():
@@ -19,7 +20,7 @@ def main(page: ft.Page):
         "Freeman": "/fonts/Freeman/Freeman-Regular.ttf",
     }
 
-    background_audio = ft.Audio(
+    background_audio = fta.Audio(
         src="lofi-295209.mp3",
         autoplay=True,
     )
@@ -48,23 +49,25 @@ def main(page: ft.Page):
         on_click=toggle_audio,
         width=40,
         height=40,
-        left=1115,
-        top=550
+        # left=1115,
+        # top=550
+        right=50,
+        bottom=50,
     )
 
     def route_change(route):
         page.views.clear()
-        if page.route == "/" or page.route == "/src/frontend/pages/home":
+        if page.route ==  Routes.HOME:
             page.views.append(
                 ft.View(
-                    route="/",
+                    route=Routes.HOME,
                     controls=[create_home_page(page, audio_button)]
                 )
             )
-        elif page.route == "/src/frontend/pages/searchPage":
+        elif page.route == Routes.SEARCH:
             page.views.append(
                 ft.View(
-                    route="/src/frontend/pages/searchPage",
+                    route=Routes.SEARCH,
                     controls=[create_search_page(page)]
                 )
             )
@@ -77,7 +80,7 @@ def main(page: ft.Page):
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
-    page.go("/")
+    page.go(Routes.HOME)
 
 if __name__ == "__main__":
     ft.app(target=main)

@@ -1,32 +1,30 @@
 import flet as ft
 
+class Routes:
+    HOME = "/"
+    SEARCH = "/search"
+
 def create_navbar(page: ft.Page):
-    # page.fonts = {
-    #     "PGO": "fonts/Pathway_Gothic_One/PathwayGothicOne-Regular.ttf",
-    # }
-
-    # page.theme = ft.Theme(font_family="PGO")
-
-    # def flush_session(e):
-    #     # contoh
-    #     page.session.set("Tanaman", None)
-    #     page.session.set("Sorting", None)
-    #     page.session.set("action", None)
-    #     page.session.set("jenis_tanaman", None)
-    #     page.session.set("index_tanaman", None)
-    #     page.session.set("data_pertumbuhan_tanaman", None)
-
     def on_home_click(e):
-        # flush_session(e)
-        page.go("/src/frontend/pages/home")
+        page.go(Routes.HOME)
 
     def on_search_click(e):
-        # flush_session(e)
-        page.go("/src/frontend/pages/searchPage")   
+        page.go(Routes.SEARCH)
 
-    return ft.Container(
+    navbar = ft.Container(
         content=ft.Row(
             controls=[
+                # ft.Container(
+                #     content=ft.Image(
+                #         src="/logo.png",
+                #         width=70,
+                #         height=70,
+                #         fit=ft.ImageFit.CONTAIN,
+                #         # left=10,
+                #         # bottom=500,
+                #     ),
+                #     padding=ft.padding.only(left=20),
+                # ),
                 ft.Container(
                     content=ft.Row(
                         controls=[
@@ -62,10 +60,15 @@ def create_navbar(page: ft.Page):
                             ),
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
+                        # spacing=50,
                     ),
                     expand=True,
+                    alignment=ft.alignment.center,
                 ),
-            ],
+                # ft.Container(
+                #     width=90,
+                # )
+            ], spacing=0,
         ),
         bgcolor='black',
         padding=10,
@@ -76,6 +79,23 @@ def create_navbar(page: ft.Page):
             bottom_left=30,
             bottom_right=30,
         ),
+    )
+
+    return ft.Stack(
+        width=page.window.width,
+        expand=True,
+        controls=[ft.Image(
+                    src="/logo.png",
+                    width=80,
+                    height=80,
+                    fit=ft.ImageFit.CONTAIN,
+                    left=30,
+                    top=10,
+                ),
+                navbar,],
+        # alignment=ft.MainAxisAlignment.CENTER,
+        # spacing=300,
+        alignment=ft.alignment.top_center,
     )
 
 """"
