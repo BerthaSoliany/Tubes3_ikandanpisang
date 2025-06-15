@@ -3,11 +3,19 @@ import flet_audio as fta
 from frontend.pages.home import create_home_page
 from frontend.pages.searchPage import create_search_page
 from backend.database.connection import db_manager
+from backend.controllers.searchController import SearchController
 
 def main(page: ft.Page):
     if not db_manager.initialize_connection():
         print("Failed to initialize database connection")
         return
+    else:
+        print("Starting PDF extract...")
+        dict_of_cv_texts = SearchController.extract_cv_texts()
+        if dict_of_cv_texts is None:
+            print("Failed to extract CV texts")
+            return
+        print("PDF extract completed successfully")
     page.title = "CV Pattern Matching"
     page.padding = 0
     page.bgcolor = '#EAE6C9'
@@ -19,7 +27,7 @@ def main(page: ft.Page):
         "Freeman": "/fonts/Freeman/Freeman-Regular.ttf",
     }
 
-    background_audio = ft.Audio(
+    background_audio = fta.Audio(
         src="lofi-295209.mp3",
         autoplay=True,
     )
@@ -65,7 +73,7 @@ def main(page: ft.Page):
             page.views.append(
                 ft.View(
                     route="/src/frontend/pages/searchPage",
-                    controls=[create_search_page(page)]
+                    controls=[create_search_page(page, dict_of_cv_texts)]
                 )
             )
         page.update()

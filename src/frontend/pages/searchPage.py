@@ -4,7 +4,7 @@ from frontend.components.button import create_button
 from frontend.components.resultCard import create_result_card
 from backend.controllers.searchController import SearchController
 
-def create_search_page(page: ft.Page):
+def create_search_page(page: ft.Page, dict_of_cv_texts: dict[str, str] = None):
     rows = []
     keywords_field = ft.TextField(
                         # width=800,
@@ -168,6 +168,25 @@ def create_search_page(page: ft.Page):
     def search_cvs(e):
         if not validate_input(e):
             return
+        
+        if not dict_of_cv_texts:
+            print("No CV texts available for search.")
+            results_list.controls.clear()
+            results_list.controls.append(
+                ft.Container(
+                    content=ft.Text(
+                        "No CV texts available for search. Please extract CVs first.",
+                        size=20,
+                        font_family="PGO",
+                        color="black",
+                        text_align=ft.TextAlign.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
+                )
+            )
+            page.update()
+            return
+        
         keywords = [k.strip() for k in keywords_field.value.split(",")]
         algorithm = algorithm_dropdown.value
         top_n = int(top_matches_field.value) if top_matches_field.value else None
@@ -175,7 +194,7 @@ def create_search_page(page: ft.Page):
         algo_map = {"KMP": 0, "Boyer-Moore": 1, "Aho-Corasick": 2}
         algo_index = algo_map.get(algorithm, 0)
         
-        results = SearchController.search_cvs(keywords, algo_index, top_n)
+        results = SearchController.search_cvs(keywords, algo_index, top_n, dict_of_cv_texts)
         if results:
             results_list.controls.clear()
             stats = results["statistics"]

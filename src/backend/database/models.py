@@ -47,6 +47,10 @@ class ApplicantProfile:
     def date_of_birth(self) -> Optional[date]:
         if self._date_of_birth:
             decrypted_str = decrypt_date(self._date_of_birth)
+            print(f"Decrypted date of birth: {decrypted_str}")
+            print("bisa1")
+            dateee = datetime.fromisoformat(decrypted_str).date() if decrypted_str else None
+            print("bisa2")
             return datetime.fromisoformat(decrypted_str).date() if decrypted_str else None
         return None
     

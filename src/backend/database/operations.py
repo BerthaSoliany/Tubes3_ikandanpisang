@@ -138,6 +138,21 @@ class DatabaseOperations:
             cursor.execute(query, (applicant_id,))
             row = cursor.fetchone()
             if row:
+                # debug print date_of_birth
+                date_of_birth = row[3]
+                print("hhohooho")
+                if isinstance(date_of_birth, datetime):
+                    print("cok")
+                    date_of_birth = date_of_birth.date()
+                elif isinstance(date_of_birth, str):
+                    try:
+                        print("hiihihihi")
+                        date_of_birth = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
+                    except ValueError:
+                        print("Error parsing date_of_birth from string")
+                        date_of_birth = None
+                print(f"Retrieved applicant date_of_birth: {date_of_birth.strftime('%Y-%m-%d') if date_of_birth else 'None'}")
+                
                 return ApplicantProfile.from_row(tuple(row))
             return None
         except Error as e:
