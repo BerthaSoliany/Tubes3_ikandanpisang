@@ -9,7 +9,15 @@
 6. [Author](#author)
 
 ## About
-The CV Analyzer App is designed to analyze CVs using advanced algorithms and provide insights based on the extracted information. The application utilizes the Knuth-Morris-Pratt (KMP) and Boyer-Moore (BM) algorithms for efficient string searching, along with the Levenshtein Distance algorithm for measuring string similarity. Regular Expressions (Regex) are employed to extract important information from CVs automatically.
+The CV Analyzer App is designed to analyze CVs using advanced algorithms and provide insights based on the extracted information. The application utilizes the Knuth-Morris-Pratt (KMP), Boyer-Moore (BM), and Aho-Corasick algorithms for efficient string searching, along with the Levenshtein Distance algorithm for measuring string similarity which handles possible typo. Regular Expressions (Regex) are employed to extract important information from CVs to create summary automatically.
+
+| Algorithm | Explanation |
+|------|-----|
+| **Knuth-Morris-Pratt** algorithm | focuses on avoiding redundant character re-checks after a mismatch, implemented using border function which determines how much should pattern be shifted after a mismatch instead of repeating from the beginning. | 
+| **Boyer-Moore** algorithm | compares pattern from right to left instead of the usual left to right, implemented using looking-glass and character-jump technique based on the last occurrence of each letter in the pattern. |
+| **Aho-Corasick** algorithm | preprocessed all patterns to build an automaton, which consists of a trie structure of all possible prefixes, failure-links, dan output-links, allowing simultaneous searching of numerous pattens within one traversal of text. |
+| **Levenshtein Distance** algorithm | calculates the mininum number of character edits (insertions, deletions, or substitutions) required to transform one string into another. |
+| **Regular Expressions** | standardized text patterns to match and extract spesific information from text. |
 
 ## Project Structure
 ```
@@ -25,7 +33,7 @@ Tubes3_ikandanpisang
 │   └── utils                  # Utility functions
 ├── data                       # Sample CV files for testing
 ├── doc                        # Project report
-├── pyproject.toml            # Project configuration
+├── pyproject.toml             # Project configuration
 ├── requirements.txt           # Required Python packages
 └── README.md                  # Project documentation
 ```
