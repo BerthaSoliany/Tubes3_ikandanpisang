@@ -11,9 +11,20 @@ def create_navbar(page: ft.Page):
     def on_search_click(e):
         page.go(Routes.SEARCH)
 
-    return ft.Container(
+    navbar = ft.Container(
         content=ft.Row(
             controls=[
+                # ft.Container(
+                #     content=ft.Image(
+                #         src="/logo.png",
+                #         width=70,
+                #         height=70,
+                #         fit=ft.ImageFit.CONTAIN,
+                #         # left=10,
+                #         # bottom=500,
+                #     ),
+                #     padding=ft.padding.only(left=20),
+                # ),
                 ft.Container(
                     content=ft.Row(
                         controls=[
@@ -49,10 +60,15 @@ def create_navbar(page: ft.Page):
                             ),
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
+                        # spacing=50,
                     ),
                     expand=True,
+                    alignment=ft.alignment.center,
                 ),
-            ],
+                # ft.Container(
+                #     width=90,
+                # )
+            ], spacing=0,
         ),
         bgcolor='black',
         padding=10,
@@ -63,6 +79,23 @@ def create_navbar(page: ft.Page):
             bottom_left=30,
             bottom_right=30,
         ),
+    )
+
+    return ft.Stack(
+        width=page.window.width,
+        expand=True,
+        controls=[ft.Image(
+                    src="/logo.png",
+                    width=80,
+                    height=80,
+                    fit=ft.ImageFit.CONTAIN,
+                    left=30,
+                    top=10,
+                ),
+                navbar,],
+        # alignment=ft.MainAxisAlignment.CENTER,
+        # spacing=300,
+        alignment=ft.alignment.top_center,
     )
 
 """"

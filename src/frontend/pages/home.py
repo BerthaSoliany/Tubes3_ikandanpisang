@@ -32,7 +32,7 @@ def create_home_page(page: ft.Page, button: ft.FloatingActionButton | None = Non
                                         color="black",
                                     ),
                                     ft.Text(
-                                        "A CV analysis tool using advanced pattern matching algorithms (KMP & Boyer-Moore) "
+                                        "A CV analysis tool using advanced pattern matching algorithms (KMP, Boyer-Moore, Aho-Corasick) "
                                         "and Levenshtein Distance for intelligent text comparison.",
                                         size=25,
                                         color="black",
@@ -61,7 +61,7 @@ def create_home_page(page: ft.Page, button: ft.FloatingActionButton | None = Non
                                 color="black",
                             ),
                             ft.Text(
-                                "• Advanced pattern matching algorithms (KMP & Boyer-Moore)\n"
+                                "• Advanced pattern matching algorithms\n"
                                 "• Levenshtein Distance for intelligent text comparison\n"
                                 "• User-friendly interface for CV analysis\n"
                                 "• Real-time results and insights",
