@@ -9,24 +9,31 @@ def extract_pdfs(directory, max_workers=None):
         print(f"Direktori tidak ditemukan: {directory}")
         return False
     
-    pdf_files = [f for f in os.listdir(directory) if f.lower().endswith('.pdf')]
+    pdf_files = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.lower().endswith('.pdf'):
+                pdf_files.append(os.path.join(root, file))
     
     if not pdf_files:
-        print("Tidak ada file PDF ditemukan di direktori ini.")
+        print("Tidak ada file PDF ditemukan di direktori dan subfoldernya.")
         return False
+    
+    print(f"Ditemukan {len(pdf_files)} file PDF di direktori dan subfoldernya.")
     
     extracted_data = {}
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-        pdf_paths = [os.path.join(directory, f) for f in pdf_files]
-        for result_tuple in executor.map(extract_pdf_to_file, pdf_paths):
+        for result_tuple in executor.map(extract_pdf_to_file, pdf_files):
             if result_tuple is not False:
-                pdf_name, extracted_text = result_tuple
-                extracted_data[pdf_name] = extracted_text
+                pdf_path, extracted_text = result_tuple
+                relative_path = os.path.relpath(pdf_path, directory)
+                extracted_data[relative_path] = extracted_text
 
     if not extracted_data:
         print("Tidak ada teks yang berhasil diekstrak dari PDF manapun.")
         return False
         
+    print(f"Berhasil mengekstrak teks dari {len(extracted_data)} file PDF.")
     return extracted_data
 
 def extract_pdf_to_file(pdf_path, output_file=None):
