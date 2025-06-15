@@ -163,11 +163,42 @@ def create_search_page(page: ft.Page):
             page.update()
             return False
         return True
-            
+    
+    loading_container = ft.Container(
+        content=ft.Column([
+            ft.ProgressRing(
+                color="black",
+                width=50,
+                height=50,
+                stroke_width=5,
+            ),
+            ft.Text(
+                "Searching...",
+                size=20,
+                font_family="PGO",
+                color="black",
+                text_align=ft.TextAlign.CENTER,
+            )
+        ],
+        alignment=ft.alignment.center,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        spacing=10,
+        ),
+        visible=False,
+        alignment=ft.alignment.center,
+    )
 
     def search_cvs(e):
         if not validate_input(e):
             return
+        
+        loading_container.visible = True
+        results_list.controls.clear()
+        results_list.visible = False
+        exact_text.value = ""
+        fuzzy_text.value = ""
+        page.update()
+
         keywords = [k.strip() for k in keywords_field.value.split(",")]
         algorithm = algorithm_dropdown.value
         top_n = int(top_matches_field.value) if top_matches_field.value else None
@@ -229,7 +260,9 @@ def create_search_page(page: ft.Page):
             # stats = results["statistics"]
             # nonlocal match_text
             # match_text = f"Processing time: {stats['total_time']:.2f}s ({len(results['results'])} CVs found)"
-            
+        
+        loading_container.visible = False
+        results_list.visible = True
         page.update()
     
     data = []
@@ -307,8 +340,9 @@ def create_search_page(page: ft.Page):
                                 exact_text,
                                 fuzzy_text,
                             ], alignment=ft.MainAxisAlignment.CENTER),
+                            loading_container,
                             results_list,
-                        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=5
+                        ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=5, alignment=ft.alignment.center
                         ),
                         padding=ft.padding.only(top=10, left=20, right=20, bottom=10),
                         bgcolor="#E2CD95",
