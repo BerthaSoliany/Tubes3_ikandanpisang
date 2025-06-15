@@ -1,7 +1,6 @@
 import flet as ft
 from frontend.components.button import create_button
 from frontend.components.summary import summary_dialog
-# from frontend.components.viewCV import view_cv_dialog
 from backend.algorithms.regex_parse import get_summary
 import os
 
@@ -24,15 +23,6 @@ def create_result_card(page: ft.Page, name: str, exact_matches: list[tuple[str, 
         )
     
     total_matches = sum(m[1] for m in exact_matches + fuzzy_matches)
-
-    # keyword_items = [
-    #     ft.Text(
-    #         f"{i+1}. {keywords[i][0]}: {keywords[i][1]} occurence{'s' if keywords[i][1] > 1 else ''}",
-    #         size=18,
-    #         font_family="PGO",
-    #         color="black",
-    #     ) for i in range(len(keywords))
-    # ]
 
     matches_list = ft.ListView(
         spacing=5,
@@ -83,58 +73,12 @@ def create_result_card(page: ft.Page, name: str, exact_matches: list[tuple[str, 
                     )
                 )
 
-    # exact_items = []
-    # if exact_matches:
-    #     exact_items.extend([
-    #         ft.Text(
-    #             "Exact matches:",
-    #             size=20,
-    #             font_family="PGO",
-    #             color="black",
-    #             weight=ft.FontWeight.BOLD
-    #         ),
-    #         *[ft.Text(
-    #             f"{i+1}. {match[0]}: {match[1]} occurence{'s' if match[1] > 1 else ''}",
-    #             size=18,
-    #             font_family="PGO",
-    #             color="black",
-    #         ) for i, match in enumerate(exact_matches)]
-    #     ])
-    
-    # # Create fuzzy match items
-    # fuzzy_items = []
-    # if fuzzy_matches:
-    #     fuzzy_items.extend([
-    #         ft.Text(
-    #             "Fuzzy matches:",
-    #             size=20,
-    #             font_family="PGO",
-    #             color="black",
-    #             weight=ft.FontWeight.BOLD,
-    #             color="#E2A195"  # Different color for fuzzy matches
-    #         ),
-    #         *[ft.Text(
-    #             f"{i+1}. {match[0]}: {match[1]} occurence{'s' if match[1] > 1 else ''}",
-    #             size=18,
-    #             font_family="PGO",
-    #             color="#E2A195",  # Same color for fuzzy matches
-    #             italic=True
-    #         ) for i, match in enumerate(fuzzy_matches)]
-    #     ])
-
-    
     def show_dialog(e):
         summary = get_summary(extracted_cv)
         page.open(summary_dialog(page, summary, applicant_info))
         page.update()
 
     alert_dialog = ft.AlertDialog(
-        # title=ft.Text("Input tidak valid"),
-        # title_text_style=ft.TextStyle(
-        #     font_family="PGO",
-        #     size=24,
-        #     color="black",
-        # ),
         content="CV not found. Please check the file path.",
         content_text_style=ft.TextStyle(
             font_family="PGO",
@@ -155,8 +99,6 @@ def create_result_card(page: ft.Page, name: str, exact_matches: list[tuple[str, 
         actions_alignment=ft.MainAxisAlignment.END,
     )
     
-    # project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-    # cv = os.path.join(project_root, "data", cv_path)
     def open_cv(e):
         if not os.path.exists(cv_path):
             page.open(alert_dialog)
@@ -199,21 +141,12 @@ def create_result_card(page: ft.Page, name: str, exact_matches: list[tuple[str, 
                     italic=True,
                 ),
             ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-            
-            # ft.Text(
-            #     "Matched keywords:",
-            #     size=20,
-            #     font_family="PGO",
-            #     color="black",
-            # ),
-            
             ft.Container(
                 content=matches_list,
                 height=130,
                 bgcolor="#EAE6C9",
                 border_radius=10,
             ),
-            
             ft.Row([
                 create_button(
                     text="Summary",
@@ -234,6 +167,5 @@ def create_result_card(page: ft.Page, name: str, exact_matches: list[tuple[str, 
         bgcolor="#EAE6C9",
         border=ft.border.all(2, "black"),
         width=360,
-        # height=250,
         expand=True,
     )

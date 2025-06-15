@@ -47,7 +47,6 @@ class ApplicantProfile:
     def date_of_birth(self) -> Optional[date]:
         if self._date_of_birth:
             if isinstance(self._date_of_birth, (date, datetime)):
-                # print(f"Date already a date object: {self._date_of_birth}")
                 if isinstance(self._date_of_birth, datetime):
                     return decrypt_date(self._date_of_birth.date())
                 return decrypt_date(self._date_of_birth.isoformat())

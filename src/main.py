@@ -52,13 +52,10 @@ def main(page: ft.Page):
     audio_button = ft.FloatingActionButton(
         icon=ft.Icons.PAUSE,
         bgcolor="black",
-        # icon_color="black",
         tooltip="Pause music",
         on_click=toggle_audio,
         width=40,
         height=40,
-        # left=1115,
-        # top=550
         right=50,
         bottom=50,
     )

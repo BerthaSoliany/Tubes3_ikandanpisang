@@ -14,17 +14,6 @@ def create_navbar(page: ft.Page):
     navbar = ft.Container(
         content=ft.Row(
             controls=[
-                # ft.Container(
-                #     content=ft.Image(
-                #         src="/logo.png",
-                #         width=70,
-                #         height=70,
-                #         fit=ft.ImageFit.CONTAIN,
-                #         # left=10,
-                #         # bottom=500,
-                #     ),
-                #     padding=ft.padding.only(left=20),
-                # ),
                 ft.Container(
                     content=ft.Row(
                         controls=[

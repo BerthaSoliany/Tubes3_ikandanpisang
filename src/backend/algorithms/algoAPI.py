@@ -7,24 +7,10 @@ import concurrent.futures
 import time
 import sys
 import os
-# sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-# from src.backend.utils.pdf_extract import extract_pdfs
 
 def stringMatching(patterns: list[str], algorithm: int, dict_of_cv_texts: dict[str, str] = None):
     if not (0 <= algorithm <= 2):
         raise ValueError("Invalid algorithm value. Use 0 for KMP, 1 for Boyer-Moore, or 2 for Aho-Corasick.")
-    
-    # dir_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', '11152490.pdf')
-
-    # current_dir = os.path.dirname(os.path.abspath(__file__))
-    # project_root = os.path.abspath(os.path.join(current_dir, '..', '..', '..'))
-    # data_dir = os.path.join(project_root, 'data')
-    
-    # if not os.path.exists(data_dir):
-    #     print(f"Folder data tidak ditemukan: {data_dir}")
-    #     return None
-    # print(f"Mengekstrak PDF dari direktori: {data_dir}")
-    # dict_of_cv_texts = extract_pdfs(data_dir, max_workers=os.cpu_count()) 
     
     if not dict_of_cv_texts:
         print("Tidak ada teks CV yang berhasil diekstrak. Menghentikan proses.")
@@ -41,7 +27,6 @@ def stringMatching(patterns: list[str], algorithm: int, dict_of_cv_texts: dict[s
         search_algorithm_func = search_aho 
     
     # --- exact matching ---
-    print("Memulai pencarian exact matching...")
     results_per_cv_akumulatif = {}
     exact_cv_processed_count = 0
 
@@ -75,10 +60,8 @@ def stringMatching(patterns: list[str], algorithm: int, dict_of_cv_texts: dict[s
     end_exact_time = time.perf_counter()
     exact_time = end_exact_time - start_exact_time 
 
-    print(f"Exact matching selesai. {exact_cv_processed_count} CVs diproses dalam {exact_time:.4f} detik.")
     
     # --- fuzzy matching ---
-    print("Memulai pencarian fuzzy matching...")
     fuzzy_cv_processed_count = 0 
     all_fuzzy_tasks = [] 
     
@@ -119,10 +102,8 @@ def stringMatching(patterns: list[str], algorithm: int, dict_of_cv_texts: dict[s
 
     end_fuzzy_time = time.perf_counter()
     fuzzy_time = end_fuzzy_time - start_fuzzy_time
-    print(f"Fuzzy matching selesai. {fuzzy_cv_processed_count} CVs diproses dalam {fuzzy_time:.4f} detik.")
 
     # --- final output ---
-    print("Menyusun hasil akhir...")
     final_output_results = {}
     for cv_path, data in results_per_cv_akumulatif.items():
         final_output_results[cv_path] = (

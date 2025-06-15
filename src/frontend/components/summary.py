@@ -2,15 +2,6 @@ import flet as ft
 from frontend.components.button import create_button
 
 def summary_dialog(page: ft.Page, summary: str, applicant_info: dict):
-    # personal_info = {
-    # "name": applicant_info["name"],
-    # "birthdate": applicant_info["dob"],
-    # "address": applicant_info["address"],
-    # "phone": applicant_info["phone"],
-    # "role": applicant_info["role"],
-    # "summary": "",
-    # }
-
     skills = summary["skills"]
     if not skills:
         skills = ["No skills found"]
@@ -97,7 +88,6 @@ def summary_dialog(page: ft.Page, summary: str, applicant_info: dict):
         education_container = education_list
 
     rows = []
-    # for i in range(0, len(skills), 6):
     row = ft.Row([
             ft.Container(
                 content=ft.Text(
@@ -160,9 +150,7 @@ def summary_dialog(page: ft.Page, summary: str, applicant_info: dict):
                         ),
                         ft.Text(
                             f"Summary: {summary['summary']}",
-                            # "Summary: ",
                             size=18,
-                            # weight=ft.FontWeight.BOLD,
                             font_family="PGO",
                             color="black",
                         ),
@@ -233,35 +221,6 @@ def summary_dialog(page: ft.Page, summary: str, applicant_info: dict):
                             border_radius=10,
                             padding=10,
                             content=job_container,
-                            # ft.ListView(
-                            #     controls=[
-                                    # ft.Text(
-                                    #     job,
-                                    #     size=16,
-                                    #     font_family="PGO",
-                                    #     color="black",
-                                    # ) for job in job_history
-                                    # ft.Column([
-                                    #     ft.Text(
-                                    #         job[0],
-                                    #         size=16,
-                                    #         font_family="PGO",
-                                    #         color="black",
-                                    #         weight=ft.FontWeight.BOLD,
-                                    #     ) for job in job_history
-                                    # ] + [
-                                    #     ft.Text(
-                                    #         job[1],
-                                    #         size=14,
-                                    #         font_family="PGO",
-                                    #         color="black",
-                                    #     ) for job in job_history
-                                    # ])
-                                    
-                                # ],
-                                # height=100,
-                                # spacing=5,
-                            # ),
                             border=ft.border.all(2, "black")
                         ),
                     ]),
@@ -293,7 +252,6 @@ def summary_dialog(page: ft.Page, summary: str, applicant_info: dict):
             height=800,
             expand=True,
             border_radius=10,
-            # border=ft.border.all(2, "black"),
         ),
         actions=[create_button(
             text="Close",
@@ -306,6 +264,3 @@ def summary_dialog(page: ft.Page, summary: str, applicant_info: dict):
         
     )
     return dialog
-    
-    # page.open(dialog)
-    # page.update()
